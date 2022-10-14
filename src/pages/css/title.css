@@ -1,0 +1,41 @@
+.titlepage{
+    height:100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+    border-radius: 10px;
+    background-color: rgb(228, 120, 32);
+}
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    margin: 10px;
+    border-radius: 10px;
+    background-color: blueviolet;
+    min-height: 50%;
+    text-align: center;
+}
+
+input{
+    margin: 5px;
+    border-radius: 10px;
+    background-color: rgb(244, 134, 248);
+    align-items: center;
+    justify-content: center;
+}
+
+.buttons{
+
+}
+
+button{
+    margin: 5px;
+    border-radius: 10px;
+    background-color: rgb(0, 136, 255);
+    align-items: center;
+    justify-content: center;
+}
