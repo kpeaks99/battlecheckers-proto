@@ -1,3 +1,7 @@
+h1{
+    margin: 0;
+    padding: 0;
+}
 .profile-container{
     height:100%;
     display: flex;

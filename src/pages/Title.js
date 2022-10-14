@@ -8,8 +8,11 @@ function Title() {
   const [password, setPassword] = useState('')
   let navigate = useNavigate()
   const routeChange = () =>{ 
-    let path = "/dashboard"
-    navigate(path);
+    if(username != '' & password != ''){
+      let path = "/dashboard"
+      navigate(path);
+    }
+    
   }
   
   return (

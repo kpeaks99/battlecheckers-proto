@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 function Registration() {
   let navigate = useNavigate()
   const routeChange = () =>{ 
-    let path = "/dashboard"; 
-    navigate(path);
+    if(username != '' & password != '' & email != ''){
+      let path = "/dashboard"
+      navigate(path);
+    }
   }
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -14,21 +16,21 @@ function Registration() {
     <div className='titlepage'>
       <h1>BattleCheckers</h1>
       <form>
-        <label>Username </label>
         <input 
           type="text" 
+          placeholder='Username'
           required
           onChange={(e) => setUsername(e.target.value)}/>
 
-        <label>Password </label>
         <input 
-          type="text" 
+          type="text"
+          placeholder='Password' 
           required
           onChange={(e) => setPassword(e.target.value)}/>
         
-        <label>Email </label>
         <input 
           type="text" 
+          placeholder='email@website.com'
           required
           onChange={(e) => setEmail(e.target.value)}/>
 
