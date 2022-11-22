@@ -1,17 +1,25 @@
+import axios from 'axios';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 function Registration() {
   let navigate = useNavigate()
-  const routeChange = () =>{ 
-    if(username != '' & password != '' & email != ''){
-      let path = "/dashboard"
-      navigate(path);
-    }
-  }
+
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const user = {username, email};
+    const response = await axios.post(
+      "http://localhost:8080/user/registration",
+      user
+    )
+    let path = "/user/login"
+    navigate(path);
+  };
   return (
     <div className='titlepage'>
       <h1>BattleCheckers</h1>
@@ -34,7 +42,7 @@ function Registration() {
           required
           onChange={(e) => setEmail(e.target.value)}/>
 
-        <button className='register-btn' onClick={routeChange}>Register</button>
+        <button className='register-btn' onClick={handleSubmit}>Register</button>
       </form>
       
     </div>
