@@ -7,10 +7,13 @@ const db = require('./models');
 
 app.use(cors()); //actually using the middleware of Cors to automatically whitelist PC
 
+
+
 //Routers
 const statsRouter =require ("./routes/Stats");
 app.use("/stats",statsRouter); // Enables post and get requests from the Posts route
 const loginRouter =require ("./routes/user");
+const { sequelize } = require('./models');
 app.use("/user",loginRouter); 
 app.use(express.json());
 

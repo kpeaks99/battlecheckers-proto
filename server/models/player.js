@@ -1,8 +1,11 @@
-const Sequelize = require('sequelize');
-const pdata = require('./pdata');
-module.exports = function(sequelize, DataTypes) {
 
-  return sequelize.define('player', {
+const Sequelize = require('sequelize');
+const initModels = require('./init-models');
+
+module.exports = function(sequelize, DataTypes) {
+  
+  player = sequelize.define('player', 
+  {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -14,6 +17,14 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       unique: "player_name_UNIQUE"
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
     email: {
       type: DataTypes.STRING(255),
       allowNull: false,
@@ -23,7 +34,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.ENUM('online','offline','in_game','in_lobby'),
       allowNull: false
     }
-  }, {
+  }, 
+  {
     sequelize,
     tableName: 'player',
     timestamps: true,
@@ -61,6 +73,14 @@ module.exports = function(sequelize, DataTypes) {
         ]
       }
     ]
-  })
+    
+  });
 
-};
+  player.associate = (models) => {
+    player.hasOne(models.pdata, {foreignkey: 'id'}),
+    player.hasMany(models.friends, {foreignkey: 'friendId'})
+  };
+
+  return player;
+}
+

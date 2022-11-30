@@ -6,18 +6,19 @@ function Registration() {
   let navigate = useNavigate()
 
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("")
 
   const handleSubmit = async e => {
     e.preventDefault();
     const user = {username, email};
+    console.log(user);
     const response = await axios.post(
       "http://localhost:8080/user/registration",
       user
     )
-    let path = "/user/login"
+    let path = "/user/login" //affter successful regisgration go to login page
     navigate(path);
   };
   return (
@@ -28,18 +29,21 @@ function Registration() {
           type="text" 
           placeholder='Username'
           required
+          value = {username}
           onChange={(e) => setUsername(e.target.value)}/>
 
         <input 
           type="text"
           placeholder='Password' 
           required
+          value={password}
           onChange={(e) => setPassword(e.target.value)}/>
         
         <input 
           type="text" 
           placeholder='email@website.com'
           required
+          value={email}
           onChange={(e) => setEmail(e.target.value)}/>
 
         <button className='register-btn' onClick={handleSubmit}>Register</button>

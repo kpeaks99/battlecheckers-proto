@@ -14,23 +14,38 @@ function Profile() {
   }, {});
   return (
     <div>
-      <h1>Profile</h1>
+       <h1>Profile 
+      </h1>
+      {listOfStats.map((value,key) => {return <div className="user"> {value.player_name}</div>
+      })}
       <div className="profile-container">
         <div className='profile stats'>Stats
           <p>{listOfStats.map((value,key) => {
                 return(
                       <div className ="stats">
-                        <div className ="player">{value.player_id}</div>
-                        <div className ="wins">{value.wins}</div>
-                        <div className ="losts">{value.losts}</div>
-                        <div className ="draw">"{value.draw}</div>
+                        <div className ="player">{value.player.player_name}</div>
+                        <div className ="wins">{value.player.pdatum.wins}</div>
+                        <div className ="losts">{value.player.pdatum.losts}</div>
+                        <div className ="draw">{value.player.pdatum.draw}</div>
+                      </div>
+                );
+            
+          })}
+          </p>  
+        </div>
+        <div className='profile friends'>Friends List
+        <p> {listOfStats.map((value,key) => {
+                return(
+                      <div className ="friendsList">
+                        
+                        <div className ="friends">{value.friend.player_name}</div>
+                      
                       </div>
                 );
               
           })}
           </p>  
         </div>
-        <div className='profile friends'>Friends List</div>
       </div>
     </div>
   )

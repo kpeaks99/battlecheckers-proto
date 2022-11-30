@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
-const player = require('./player');
+const player = require('./Player');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('pdata', {
+  pdata = sequelize.define('pdata', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -20,7 +20,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    player_id: {
+    playerId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -50,13 +50,18 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "player_id",
+        name: "playerId",
         using: "BTREE",
         fields: [
-          { name: "player_id" },
+          { name: "playerId" },
         ]
       },
     ]
-  });
+  } );
+
+  pdata.associate = (models) => {
+      pdata.belongsTo(models.player, {foreignkey: 'playerId'})
+  };
+  return pdata;
 };
 

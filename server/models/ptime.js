@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('ptime', {
+  return sequelize.define('ptime', 
+  {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -19,7 +20,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATEONLY,
       allowNull: true
     },
-    pdata_id: {
+    pdataId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -27,7 +28,8 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     }
-  }, {
+  },
+  {
     sequelize,
     tableName: 'ptime',
     timestamps: false,
@@ -44,7 +46,7 @@ module.exports = function(sequelize, DataTypes) {
         name: "fk_ptime_pdata1_idx",
         using: "BTREE",
         fields: [
-          { name: "pdata_id" },
+          { name: "pdataId" },
         ]
       },
     ]

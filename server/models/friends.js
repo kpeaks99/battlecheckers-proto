@@ -1,29 +1,31 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('friends', {
+  friends = sequelize.define('friends', 
+  {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    player_friend_id: {
+    friendId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'player',
         key: 'id'
       }
     },
-    player_id: {
+    playerId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'player',
         key: 'id'
       }
     }
-  }, {
+  }, 
+  {
     sequelize,
     tableName: 'friends',
     timestamps: false,
@@ -37,19 +39,23 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "player_id",
+        name: "playerId",
         using: "BTREE",
         fields: [
-          { name: "player_id" },
+          { name: "playerId" },
         ]
       },
       {
-        name: "player_Friend_id",
+        name: "friendId",
         using: "BTREE",
         fields: [
-          { name: "player_id" },
+          { name: "friendId" },
         ]
       }
     ]
   });
+  friends.associate = (models) => {
+    friends.belongsTo(models.player, {foreignkey: 'friendId', as: 'friend'})
 };
+  return friends;
+}

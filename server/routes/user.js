@@ -5,22 +5,23 @@ const dotenv = require("dotenv")
 const db = require("../models");
 const router = express.Router();
 const {pdata} = require("../models");
-const player = require("../models/player");
+const player = require("../models/Player");
 
 
 
     //registration
 router.post("/registration", async (req,res)=> {
     //const salt = await bcrypt.genSalt(10); for password no implemented yet
-    const today = new Date();
+    const username = req.body.username;
+    const email = req.body.email;
     var user = {
-        player_name : req.body.username,
-        email : req.body.email,
-        created_at : today
+        email : email,
+        player_name : username,
+        created_at :  new Date()
     };
     created_user = await player.create(user);
     console.log("User:" + req.body.username +"Has been created");
-    res.status(201).json(created_user);
+    res.json(created_user);
 });
 
 
