@@ -1,0 +1,17 @@
+body{
+  margin: 0;
+  padding: 0;
+}
+.sidebar {
+  width: 10%;
+  height: 100vh;
+  margin-right: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  float: left;
+  align-items: center;
+  vertical-align: top;
+  background-color: lightblue;
+
+}
