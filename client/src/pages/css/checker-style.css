@@ -62,6 +62,24 @@ p {
     opacity: 0.5;
 }
 
+.squareG{
+    width: 100px;
+    height: 100px;
+    background-color: rgb(40, 211, 49);
+    margin: 10px;
+    float: center;
+    
+}
+
+.squareG:hover{
+    width: 100px;
+    height: 100px;
+    background-color: rgb(171, 209, 172);
+    margin: 10px;
+    float: center;
+    
+}
+
 #divider {
     font-size: 90px;
     margin-left: 15px;
