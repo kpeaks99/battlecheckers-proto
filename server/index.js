@@ -58,12 +58,22 @@ const io = new Server(server, {
     console.log(players);
 
     //for testing, it's for the two players to click 
-    socket.on('square_click', (roomID) => {
+    socket.on('square_click', (roomID,playerColor) => {
         //console.log(games);
         squareCounter++
         console.log("square clicked" + squareCounter);
-        io.to(games[roomID].player1.playerId).emit('update_square', squareCounter);
-        io.to(games[roomID].player2.playerId).emit('update_square', squareCounter); 
+        //true is red, false is black
+        if(playerColor){
+            io.to(games[roomID].player1.playerId).emit('update_square', squareCounter, false);
+            io.to(games[roomID].player2.playerId).emit('update_square', squareCounter, true); 
+        }
+        else
+        {
+            io.to(games[roomID].player1.playerId).emit('update_square', squareCounter, true);
+            io.to(games[roomID].player2.playerId).emit('update_square', squareCounter, false);
+        }
+        // io.to(games[roomID].player1.playerId).emit('update_square', squareCounter);
+        // io.to(games[roomID].player2.playerId).emit('update_square', squareCounter); 
     })
 
     socket.on('join_room', (roomID) => {  
@@ -79,10 +89,10 @@ const io = new Server(server, {
             console.log("player 2 joined");
 
             // take them to gameboard
-            //false = red player1
-            //true = black player2
-            io.to(games[roomID].player1.playerId).emit('begin_game', false, roomID);
-            io.to(games[roomID].player2.playerId).emit('begin_game', true, roomID);
+            //false = black player2
+            //true = red player1
+            io.to(games[roomID].player1.playerId).emit('begin_game', true, roomID);
+            io.to(games[roomID].player2.playerId).emit('begin_game', false, roomID); 
             console.log(games[roomID]);
         }
             
@@ -101,6 +111,18 @@ const io = new Server(server, {
         console.log(games[roomID]);
         socket.emit('game_created', true, players, roomID);
     });
+
+    //maybe send over the entire/updated boardgame state
+    socket.on('change_turn', (playerTurn, board, roomID) => {
+        {
+            var isGameover = false;
+            if(playerTurn){
+                io.to(games[roomID].player1.playerId).emit('change_turn', playerTurn, board);
+            }
+            else{
+                io.to(games[roomID].player2.playerId).emit('change_turn', playerTurn, board);
+            }
+        }})
 
     // socket.on('disconnect', () => {
             //delete user from players as they disconnect
