@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Tourney from './pages/Tourney';
 import Profile from './pages/Profile';
 import Battleboard from './pages/Battleboard';
-import Boardgame from './pages/Boardgame';
+import MatchMaking from './pages/MatchMaking';
 
 function App() {
   return (
@@ -14,8 +14,7 @@ function App() {
       <div className='sidebar'>
         <Link to="/dashboard">Dashboard </Link>
         <Link to="/battleboard">Battleboard </Link>
-        {/* will need to hide the boardgame in the future */}
-        <Link to="/boardgame">Boardgame </Link>
+        <Link to="/MatchMaking">MatchMaking </Link>
         <Link to="/tourney">Tournaments </Link>
         <Link to="/profile">Profile </Link>
         <Link to="/">Title </Link>
@@ -27,7 +26,7 @@ function App() {
         <Route path="/tourney" element={<Tourney/>}/>
         <Route path="/profile" element={<Profile/>}/>
         <Route path="/battleboard" element={<Battleboard/>}/>
-        <Route path="/boardgame" element={<Boardgame/>}/>
+        <Route path="/matchmaking" element={<MatchMaking/>}/>
       </Routes>
     </Router>);
 }

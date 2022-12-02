@@ -1,99 +1,81 @@
-import React from 'react'
-import {useContext, useEffect,useState} from 'react'
-import {useNavigate} from "react-router-dom";
-
-//we take the socket from the context/socket and pass it here
+import React, { useEffect,useContext,useState, useRef } from "react"
+import { useLocation } from "react-router-dom";
+//link stylesheet style.css
+import './css/checker-style.css'; 
+import io from 'socket.io-client';
 import { SocketContext } from "../context/socket";
 
 function Battleboard() {
-  const navigate = useNavigate();
 
   //this is the same socket from the context
   const socket = useContext(SocketContext);
+  
+//using react hook location to get info from home.js, for when game is created
+  const location = useLocation();
 
-  const [gameID, setGameID] = useState("");
-  const [joingame, setJoinGame] = useState("");
+  //info passed from home.js
+  //remember, false is RED, true is BLACK
+  //var playerColor = location.state.playerColor 
+  const gameID = location.state.gameID
+  //const socket = location.state.socket
 
-  const joinRoom = () => {
-    //setJoinGame(joingame);
-      if (joingame !== "") {
-          console.log("joining room: " + joingame);
-   
-          //convert joingame into an int
-          var join = parseInt(joingame);
-          //send the room number to the server
-          socket.emit('join_room', join);
-          
+  //var squareNum = 1;
+  const [squareNum, setSquareNum] = useState("");
+  const [playerColor, setPlayerColor] = useState(location.state.playerColor);
+  //setPlayerTurn(location.state.PlayerColor) 
+
+  //for testing if both players can contribute counting the squares
+  const clickCounter = () => {
+      console.log("square clicked " + playerColor);
+      if(playerColor){
+          //playerColor = false;
+          setPlayerColor(false);
+          socket.emit('square_click', gameID, location.state.playerColor);
       }
-      else
-        console.log("join is empty ")
-   };
+      //socket.emit('square_click', gameID);
+  };
 
-//when the user clicks the start game button(or was it host game?)),
-//create a random roomID and emit it to the server
-//waits for other player to join
-const startGame= () => {
-  //create random roomID 
-  var randomID = Math.floor((Math.random() * 30) + 1);
-  //send randomID to server
-  socket.emit('start_game', randomID);
- 
- };
 
- useEffect(() => {
-    
-  //there is currently no user_join on the server
-  socket.on('user_joined', (data) => {
-    alert("Player " + data.user + " joined room " + data.room);
-  })
 
-  // starting game
-  socket.on('game_created', (isGameCreated,players,roomID) => {
-    //if isGameCreated is true, set this current player's gameID to roomID
-    if (isGameCreated) {
-      setGameID(roomID);
-      console.log("gameID: " + roomID + " created");
-    }
-    else {
-      //alert("You have joined a game?");
-    }
-  });
+  useEffect(() => {
+      //recieve new +1 data from a player clicking a square
+      socket.on('update_square', (data, setInteractive) => {
+          setSquareNum(data);
+          //playerColor = setInteractive;
+          setPlayerColor(setInteractive);
+          console.log("squareNum: " + data);
+          console.log("This is set to " + setInteractive);
 
-  //navigate to actual checker board
-  socket.on('begin_game', (playerColor, roomID) => {
-    //match was successful
-    //link to boardgame the playerColor and gameID
-    navigate('/boardgame', 
-      {state: {playerColor: playerColor, gameID: roomID}});
-    
-  });
+      });
 
- }, /*[socket]*/)
+  } ,[socket]);
 
   return (
-    <div>
-       <h2>HOME!</h2>   
-      <input type="text" placeholder="Enter room number" onChange={(e) => setJoinGame(e.target.value)} />
-      <button onClick={joinRoom}>Join Room</button>
-      <h1>{joingame}</h1>
-      {/* <input type="text" placeholder="Enter Username" onChange={(e) => setUser(e.target.value)} /> */}
-      <button onClick={startGame}>Host Game</button>
-      <h1>Current RoomID: {gameID}</h1>
-      {/*when user hosts a game, it will display 'waiting for opponent...'*/}
-      {gameID !== "" ? <h2> Waiting for opponent...</h2> : <h2></h2>}
+      //display text in h2
+      <body>
+          <main>
+      <div>
+          <h2>Welcome to the game!</h2>   
+          
+          <h2>Player Turn: {playerColor ? "It's your turn!" : "Wait for turn..."}</h2>
+          
+          {/* if THIS playerColor is False, color it red */}
+          {location.state.playerColor ? <h2>You are red</h2> : <h2>You are black</h2>}
+          <h2>Game ID: {gameID}</h2>  
 
-      {/* these bellow are for testing */}
-      <button onClick={() => {
-        console.log("NAVIGATING to boardgame");
-        navigate("/Scenes/boardgame");
-      }}>test join boardgame</button>
-      <button onClick={() => {
-        console.log("NAVIGATING to boardgame");
-        navigate("../test");
-      }}>test button</button>
-    </div>
+          {/* for testing */}
+          {/* toggcle classname if playerColor is false or true */}
+          {/* <h2 className={playerColor ? "black-squareG" : "square"}>Player Turn: {playerColor ? "Black" : "Red"}</h2> */}
+           <div className={playerColor ? "squareG" : "square"} id="sq" onClick={clickCounter}> Test click counter for both sides {squareNum}</div>
+
+      </div>
+      </main>
+      </body>
+
+      
 
   );
+
 }
 
 export default Battleboard
