@@ -4,7 +4,7 @@ body{
 }
 .sidebar {
   width: 10%;
-  height: 100vh;
+  height: 95vh;
   margin-right: 10px;
   border-radius: 10px;
   display: flex;
