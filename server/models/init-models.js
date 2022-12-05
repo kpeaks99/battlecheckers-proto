@@ -1,32 +1,31 @@
 var DataTypes = require("sequelize").DataTypes;
-var _friends = require("./Friends");
-var _pdata = require("./Pdata");
-var _player = require("./Player");
-var _ptime = require("./Ptime");
+var _boardState = require("./boardState");
+var _userFriends = require("./userFriends");
+var _userStats = require("./userStats");
+var _userTable = require("./userTable");
 
 function initModels(sequelize) {
-  var friends = _friends(sequelize, DataTypes);
-  var pdata = _pdata(sequelize, DataTypes);
-  var player = _player(sequelize, DataTypes);
-  var ptime = _ptime(sequelize, DataTypes);
+  var boardState = _boardState(sequelize, DataTypes);
+  var userFriends = _userFriends(sequelize, DataTypes);
+  var userStats = _userStats(sequelize, DataTypes);
+  var userTable = _userTable(sequelize, DataTypes);
 
-  ptime.belongsTo(pdata, { as: "ptimes", foreignKey: "pdataId"});
-  pdata.hasMany(ptime, { as: "ptimes", foreignKey: "pdataId"});
-
-  friends.belongsTo(player, { as: "player", foreignKey: "playerId"});
-  player.hasMany(friends, { as: "player", foreignKey: "playerId"});
-  
-  friends.belongsTo(player, { as: "friendData", foreignKey: "friendId"});
-  player.hasMany(friends, { as: "friendData", foreignKey: "friendId"});
-  
-  pdata.belongsTo(player, { as: "pdata", foreignKey: "playerId"});
-  player.hasMany(pdata, { as: "pdata", foreignKey: "playerId"});
+  userFriends.belongsTo(userFriends, { as: "player", foreignKey: "playerId"});
+  userFriends.hasMany(userFriends, { as: "userFriends", foreignKey: "playerId"});
+  userStats.belongsTo(userFriends, { as: "id_userFriend", foreignKey: "id"});
+  userFriends.hasOne(userStats, { as: "userStat", foreignKey: "id"});
+  userTable.belongsTo(userStats, { as: "id_userStat", foreignKey: "id"});
+  userStats.hasOne(userTable, { as: "userTable", foreignKey: "id"});
+  boardState.belongsTo(userTable, { as: "playerOne", foreignKey: "playerOneId"});
+  userTable.hasOne(boardState, { as: "boardState", foreignKey: "playerOneId"});
+  boardState.belongsTo(userTable, { as: "playerTwo", foreignKey: "playerTwoId"});
+  userTable.hasOne(boardState, { as: "playerTwo_boardState", foreignKey: "playerTwoId"});
 
   return {
-    friends,
-    pdata,
-    player,
-    ptime,
+    boardState,
+    userFriends,
+    userStats,
+    userTable,
   };
 }
 module.exports = initModels;

@@ -68,3 +68,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+### Creating models from existing DB 
+
+If the config.json has been updated to use a new DB or in some case the DB strucuture has changed outside of this code use the following command 
+
+ sequelize-auto -h sql9.freemysqlhosting.net -d sql9561149 -u sql9561149 -x gBDbbdhaRT -p 3306  --dialect mysql -o "./models"
+
+ Or refer to this link on sequelize-auto:
+[https://github.com/sequelize/sequelize-auto]

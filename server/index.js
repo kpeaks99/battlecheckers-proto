@@ -11,9 +11,9 @@ app.use(cors()); //actually using the middleware of Cors to automatically whitel
 
 //Routers
 const statsRouter =require ("./routes/Stats");
-app.use("/stats",statsRouter); // Enables post and get requests from the Posts route
+app.use("/Stats",statsRouter); // Enables post and get requests from the Posts route
 const loginRouter =require ("./routes/user");
-const { sequelize } = require('./models');
+const { sequelize,Sequelize } = require('./models');
 app.use("/user",loginRouter); 
 app.use(express.json());
 

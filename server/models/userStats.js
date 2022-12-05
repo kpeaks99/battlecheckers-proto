@@ -1,37 +1,36 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('ptime', 
-  {
+  userStats = sequelize.define('userStats', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      references: {
+        model: 'userFriends',
+        key: 'playerId'
+      }
     },
-    time: {
-      type: DataTypes.TIME,
-      allowNull: true
-    },
-    player_id: {
+    wins: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    date: {
-      type: DataTypes.DATEONLY,
+    losts: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
-    pdataId: {
+    draw: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    playerId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'pdata',
-        key: 'id'
-      }
+      unique: "playerId"
     }
-  },
-  {
+  }, {
     sequelize,
-    tableName: 'ptime',
+    tableName: 'userStats',
     timestamps: false,
     indexes: [
       {
@@ -43,12 +42,17 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "fk_ptime_pdata1_idx",
+        name: "playerId",
+        unique: true,
         using: "BTREE",
         fields: [
-          { name: "pdataId" },
+          { name: "playerId" },
         ]
       },
     ]
-  });
+  });  
+  userStats.associate = (models) => {
+    userStats.belongsTo(models.userTable, {foreignkey: 'playerId'})
+  }
+  return userStats;
 };
