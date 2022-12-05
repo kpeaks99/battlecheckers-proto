@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "sql9561149",
-    "password": "gBDbbdhaRT",
-    "database": "sql9561149",
-    "host": "sql9.freemysqlhosting.net",
+    "username": "",
+    "password": "",
+    "database": "",
+    "host": "",
     "dialect": "mysql",
     "port": "3306",
     "define": {
