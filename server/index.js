@@ -76,6 +76,28 @@ const io = new Server(server, {
         // io.to(games[roomID].player2.playerId).emit('update_square', squareCounter); 
     })
 
+    //testing purposes
+    socket.on('test_connection',(roomID)=>{
+        console.log("test connection");
+        io.to(games[roomID].player1.playerId).emit('test_recieve', roomID);
+        io.to(games[roomID].player2.playerId).emit('test_recieve', roomID);
+    })
+
+    //update the board and a player finished their turn
+    socket.on('board_update', (board, roomID, playerColor) => {
+        console.log("board update");
+        //if RED player finished their turn
+        if(playerColor){
+            //send board and true(red) boolean to black player 
+            io.to(games[roomID].player2.playerId).emit('update_board', board, true);  
+        }
+        //else if BLACK player finished their turn
+        else
+        {   //send board and false(black) boolean to red player 
+            io.to(games[roomID].player1.playerId).emit('update_board', board, false);
+        }
+    })
+
     socket.on('join_room', (roomID) => {  
 
         //give the joining player(player2) the host's(player1) gameID
@@ -124,6 +146,7 @@ const io = new Server(server, {
             }
         }})
 
+        //problem: the object of the player that leaves doesn't get deleted from the players array
     // socket.on('disconnect', () => {
             //delete user from players as they disconnect
             //does not work when there are only two players on the server
