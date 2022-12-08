@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       references: {
         model: 'userStats',
-        key: 'playerId'
+        key: 'playerStatsId'
       }
     },
     name: {
@@ -40,8 +40,11 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   userTable.associate = (models) => {
-    userTable.hasOne(models.userStats, {foreignkey: 'id'}),
-    userTable.hasMany(models.userFriends, {foreignkey: 'friendId'})
+    //Whatever the alias (as:) is sequelize will append 'id'
+    //This will create a new column on the table if no column exist.
+    userTable.hasOne(models.userStats, {foreignkey: 'id', as: 'playerStats'}), //Whatever the alias is sequelize will append 'id'
+    userTable.hasMany(models.userFriends, {foreignkey: 'friendId', as: 'friend'})
+    userTable.hasMany(models.userFriends, {foreignkey: 'playerId', as: 'player'})
   };
   return userTable;
 };

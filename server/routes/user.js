@@ -47,7 +47,7 @@ logout = async (req,res,next) => {
 }
 
 
-    //registration
+    //login
 router.post("/login", async (req,res)=>  {
     const {email, password} = req.body;
 

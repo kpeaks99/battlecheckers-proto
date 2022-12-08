@@ -3,19 +3,24 @@ const router = express.Router();
 const {models} = require("../models/index.js");
 
 router.get("/", async (req,res)=>{ //Fetches all player stats
+   // res.setHeader("Access-Control-Allow-Origin", "*")
+    //res.setHeader("Access-Control-Allow-Credentials", "true");
+   // res.setHeader("Access-Control-Max-Age", "1800");
+   // res.setHeader("Access-Control-Allow-Headers", "content-type");
+   // res.setHeader( "Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS" ); 
     const playerStats = await userFriends.findAll(
     {   
-        include: [{
-            where: {Id: 1},
-            model: userTable, as: 'friend',
-   //         include: [{
-   //             model: userStats,
-   //         }]
+        include: 
+        [{
+            where: {id: 1},
+            model: userTable, as: 'player',
+            include: [{
+                model: userStats, as :'playerStats'
+            }]
         },
-   //     { 
-   //         model: userTable, as : 'friend',
-   //     }
-        ]
+        { 
+            model: userTable, as : 'friend',
+        }]
 
     });
 

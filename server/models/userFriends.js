@@ -9,11 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     playerId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'userFriends',
-        key: 'friendId'
-      }
+      allowNull: false
     },
     friendId: {
       type: DataTypes.INTEGER,
@@ -26,14 +22,6 @@ module.exports = function(sequelize, DataTypes) {
     indexes: [
       {
         name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "id" },
-        ]
-      },
-      {
-        name: "id",
         unique: true,
         using: "BTREE",
         fields: [
@@ -58,6 +46,7 @@ module.exports = function(sequelize, DataTypes) {
   });
   userFriends.associate = (models) => {
     userFriends.belongsTo(models.userTable, {foreignkey: 'friendId', as: 'friend'})
+    userFriends.belongsTo(models.userTable, {foreignkey: 'playerId', as: 'player'})
   }
   return userFriends;
 };
