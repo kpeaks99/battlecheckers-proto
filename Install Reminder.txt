@@ -1,0 +1,12 @@
+in CLIENT directory, 
+
+do 'npm i socket.io-client' 
+do 'npm install'
+
+you can now do 'npm start'
+
+in SERVER directory, 
+do 'npm install'
+do 'npm add express cors nodemon socket.io'
+
+you can now do 'npm start'
