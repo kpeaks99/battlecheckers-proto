@@ -9,17 +9,20 @@ const corsOptions ={
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200
 }
+
+
 app.use(cors(corsOptions)); //actually using the middleware of Cors to automatically whitelist PC
 
-
+app.use(express.json());
 
 //Routers
 const statsRouter =require ("./routes/Stats");
 app.use("/Stats",statsRouter); // Enables post and get requests from the Posts route
 const loginRouter =require ("./routes/user");
+app.use("/User",loginRouter);  
 const { sequelize,Sequelize } = require('./models');
-app.use("/user",loginRouter);  
-app.use(express.json());
+
+
 
 const PORT = process.env.PORT || 8080;                      
 db.sequelize.sync().then(()=>{                            //connection to mysql database is in the config file under the config.json

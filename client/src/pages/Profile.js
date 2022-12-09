@@ -23,10 +23,10 @@ function Profile() {
           <p>{listOfStats.map((value,key) => {
                 return(
                       <div className ="stats">
-                        <div className ="player">{value.userTable.name}</div>
-                        <div className ="wins">{value.userTable.userStats.wins}</div>
-                        <div className ="losts">{value.userTable.userStats.losts}</div>
-                        <div className ="draw">{value.userTable.userStats.draw}</div>
+                        <div className ="player">{value.name}</div>
+                        <div className ="wins">{value.playerStat.wins}</div>
+                        <div className ="losts">{value.playerStat.losts}</div>
+                        <div className ="draw">{value.playerStat.draw}</div>
                       </div>
                 );
             
@@ -38,7 +38,7 @@ function Profile() {
                 return(
                       <div className ="friendsList">
                         
-                        <div className ="friends">{value.userFriends.player_name}</div>
+                        <div className ="friends">{value.player.friend.name}</div>
                       
                       </div>
                 );

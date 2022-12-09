@@ -13,7 +13,7 @@ function Title() {
 
   const handleSubmit = async e => {
     e.preventDefualt();
-    const user = {email, password} ;
+    const user = {username, password} ;
     const response = await axios.post(
       "http://localhost:8080/user/login",user
     );
@@ -34,10 +34,10 @@ function Title() {
       <form>
         <input 
           type="text" 
-          placeholder='Email'
-          value = {Email}
+          placeholder='Username'
+          value = {username}
           required
-          onChange={(e) => setEmail(e.target.value)}/>
+          onChange={(e) => setUsername(e.target.value)}/>
 
         <input 
           type="text" 
