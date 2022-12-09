@@ -1,55 +1,39 @@
-import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import './css/title.css';
+import './css/title.css'
 
 function Title() {
   
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState();
-
   let navigate = useNavigate()
-
-  const handleSubmit = async e => {
-    e.preventDefualt();
-    const user = {email, password} ;
-    const response = await axios.post(
-      "http://localhost:8080/user/login",user
-    );
-    setUser(response.data)
-    localStorage.setItem('user', response.data)
-    console.log(response.data)
-  };
-
- 
-  if(user){
+  const routeChange = () =>{ 
+    if(username != '' & password != ''){
       let path = "/dashboard"
-      navigate(path);  
-  }else 
-  // if there is no user return to log in page
+      navigate(path);
+    }
+    
+  }
+  
   return (
     <div className='titlepage'>
       <h1>BattleCheckers</h1>
       <form>
         <input 
           type="text" 
-          placeholder='Email'
-          value = {Email}
+          placeholder='Username'
           required
-          onChange={(e) => setEmail(e.target.value)}/>
+          onChange={(e) => setUsername(e.target.value)}/>
 
         <input 
           type="text" 
           placeholder='Password'
-          value ={password}
           required
           onChange={(e) => setPassword(e.target.value)}/>
 
         <div className='buttons'>
-          
-          <button className='login-btn' onClick={handleSubmit}>Login</button>
-          <button className='register-btn' onClick={() => navigate("/user/registration")}>Register</button>
+          <button className='register-btn' onClick={() => navigate("/registration")}>Register</button>
+          <button className='login-btn' onClick={routeChange}>Login</button>
         </div>
         
       </form>
