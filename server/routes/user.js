@@ -7,6 +7,10 @@ const router = express.Router();
 const {promisify} =require('util');
 const { sequelize } = require("../models/index.js");
 
+router.get('/', async (req,res,next) =>{
+    console.log("i hate this");
+});
+
 isLoggedIn = async (req,res,next) => {
     console.log(req.cookies);
     if(req.cookies.jwt){
@@ -88,12 +92,13 @@ router.post("/login", async (req,res)=>  {
 
 //reg    
 router.post("/register", async (req,res) => {     
-    console.log(req.body);
+    console.log("/register Route reached");
+    
 
-    const { name, email, password, confirmPassword } = req.body;
-
+    const test = {userName, email, password, confirmPassword } = req.body;
+    console.log(test);
     //checks to see if email is in use and the user sets the right/correct password
-    const [results] = await sequelize.query('SELECT email FROM userTable WHERE email = ?');
+    const [results] = await sequelize.query(`SELECT email FROM userTable WHERE email = ${req.body.email}`);
         if(error) {
             console.log(error);
         }
@@ -113,16 +118,14 @@ router.post("/register", async (req,res) => {
         console.log(hashedPassword);
 
         // Puts user information into database
-        db.query('INSERT INTO userTable SET ?', {name: name, email: email, password: hashedPassword }, (error, results) => {
-            if(error){
-                console.log(error);
-            } else {
-                console.log(results);
-                return res.render('register', {
-                    message: 'User reigstered'
-                });
-            }
-        })
+        userTable.create({
+                name: userName,
+                password: hashedPassword,
+                email: email
+        }).then((user) => res.status(201).send(user)).catch((error) => {
+            console.log(error);
+            res.status(400).send(error);
+        });
 
     });
 
