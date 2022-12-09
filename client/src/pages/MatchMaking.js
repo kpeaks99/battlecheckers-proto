@@ -72,7 +72,6 @@ const startGame= () => {
 
   return (
     <div>
-       <h2>HOME!</h2>   
       <input type="text" placeholder="Enter room number" onChange={(e) => setJoinGame(e.target.value)} />
       <button onClick={joinRoom}>Join Room</button>
       <h1>{joingame}</h1>

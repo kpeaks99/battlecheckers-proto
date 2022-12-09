@@ -1,17 +1,29 @@
+import axios from 'axios';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 function Registration() {
   let navigate = useNavigate()
-  const routeChange = () =>{ 
-    if(username != '' & password != '' & email != ''){
-      let path = "/dashboard"
-      navigate(path);
-    }
-  }
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [email, setEmail] = useState('')
+
+
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("")
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const user = {username, email};
+    console.log(user);
+    const response = await axios.post(
+      "http://localhost:8080/user/register",
+      user,{
+      headers: {
+        'Access-Control-Allow-Origin': true,
+      }},
+    )
+    let path = "/user/login" //affter successful regisgration go to login page
+    navigate(path);
+  };
   return (
     <div className='titlepage'>
       <h1>BattleCheckers</h1>
@@ -20,21 +32,24 @@ function Registration() {
           type="text" 
           placeholder='Username'
           required
+          value = {username}
           onChange={(e) => setUsername(e.target.value)}/>
 
         <input 
           type="text"
           placeholder='Password' 
           required
+          value={password}
           onChange={(e) => setPassword(e.target.value)}/>
         
         <input 
           type="text" 
           placeholder='email@website.com'
           required
+          value={email}
           onChange={(e) => setEmail(e.target.value)}/>
 
-        <button className='register-btn' onClick={routeChange}>Register</button>
+        <button className='register-btn' onClick={handleSubmit}>Register</button>
       </form>
       
     </div>
