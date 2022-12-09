@@ -4,11 +4,16 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+//this makes the socket available to all components, 
+import { SocketContext, socket } from './context/socket'; 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  <SocketContext.Provider value={socket}>
   <React.StrictMode>
     <App />
   </React.StrictMode>
+  </SocketContext.Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

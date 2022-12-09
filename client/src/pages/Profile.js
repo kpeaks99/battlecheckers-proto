@@ -1,4 +1,3 @@
-
 import './css/profile.css';
 import axios from "axios";
 import {useEffect, useState} from "react"
