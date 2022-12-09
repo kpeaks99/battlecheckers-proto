@@ -15,8 +15,11 @@ function Registration() {
     const user = {username, email};
     console.log(user);
     const response = await axios.post(
-      "http://localhost:8080/user/registration",
-      user
+      "http://localhost:8080/user/register",
+      user,{
+      headers: {
+        'Access-Control-Allow-Origin': true,
+      }},
     )
     let path = "/user/login" //affter successful regisgration go to login page
     navigate(path);

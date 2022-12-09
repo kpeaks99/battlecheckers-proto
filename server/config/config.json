@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "password",
-    "database": "battlececkers",
-    "host": "localhost",
+    "username": "sql9561149",
+    "password": "gBDbbdhaRT",
+    "database": "sql9561149",
+    "host": "sql9.freemysqlhosting.net",
     "dialect": "mysql",
     "port": "3306",
     "define": {

@@ -4,17 +4,21 @@ const app = express();
 const cors = require("cors");   //allows us to self refrence our computer to be both host and client
 const db = require('./models');
 
-
-app.use(cors()); //actually using the middleware of Cors to automatically whitelist PC
+const corsOptions ={
+    origin:'http://localhost:3000', 
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200
+}
+app.use(cors(corsOptions)); //actually using the middleware of Cors to automatically whitelist PC
 
 
 
 //Routers
 const statsRouter =require ("./routes/Stats");
-app.use("/stats",statsRouter); // Enables post and get requests from the Posts route
+app.use("/Stats",statsRouter); // Enables post and get requests from the Posts route
 const loginRouter =require ("./routes/user");
-const { sequelize } = require('./models');
-app.use("/user",loginRouter); 
+const { sequelize,Sequelize } = require('./models');
+app.use("/user",loginRouter);  
 app.use(express.json());
 
 const PORT = process.env.PORT || 8080;                      
