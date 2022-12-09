@@ -34,7 +34,7 @@ function MatchMaking() {
 //waits for other player to join
 const startGame= () => {
   //create random roomID 
-  var randomID = Math.floor((Math.random() * 30) + 1);
+  var randomID = Math.floor((Math.random() * 1000) + 1);
   //send randomID to server
   socket.emit('start_game', randomID);
  
