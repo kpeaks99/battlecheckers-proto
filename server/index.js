@@ -59,7 +59,7 @@ const io = new Server(server, {
     //     player2: '',
     // }; 
                         // v function is called as soon as the user connects
-    socket.on('register', function (data) {
+    socket.on('register',  (data) => {
         if (data !== null) {
             //there was something in localstorage
             for(keys in games){
@@ -90,9 +90,15 @@ const io = new Server(server, {
             // }
         } else{
             //localStorage is not set, create new player
-            //io.to(socket.id).emit('new_player');
+            io.to(socket.id).emit('new_player');
         }
 
+        console.log("registering player test ");
+    });
+
+    socket.on('register',  (UID) => {
+        //update players.playerId to the data
+        players[socket.id].playerId = UID;
         console.log("registering player test ");
     });
 
@@ -217,9 +223,9 @@ const io = new Server(server, {
             }
      
             //iterate through games to find the first game that is not full
+            //keys = gameID
             for(var keys in games)
             {
-                
                 if(games[keys].player2 === ''){
                     //join the game
                     games[keys].player2 = players[socket.id];
