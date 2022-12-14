@@ -6,8 +6,3 @@ import socketio from 'socket.io-client';
 export const socket = socketio.connect('http://localhost:3001');
 export const SocketContext = React.createContext();
 
-//this sends the clients its randomID to the server
-//it's to help reconnect the the boardgame
-socket.emit('register', localStorage.getItem('gameUniqueId'));
-
-

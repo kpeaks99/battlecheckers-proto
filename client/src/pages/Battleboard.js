@@ -26,11 +26,16 @@ function Board() {
 
   const [playerColor, setPlayerColor] = useState(location.state.playerColor);
 
-  //generate randomUID for the user
-  // var  randomlyGenerateUID = Math.floor(Math.random() * 1000000000);
-  // localStorage.setItem('GameUID', randomlyGenerateUID);
+  //game connected, generate randomUID for the user to local storage
+  const [randomlyGenerateUID, setRandomlyGenerateUID] = useState(Math.floor(Math.random() * 1000000000));
 
-  // socket.emit('register', randomlyGenerateUID);
+  
+  localStorage.setItem('UserUID', randomlyGenerateUID);
+  console.log("randomlyGenerateUID: " + randomlyGenerateUID);
+
+  //socket.emit('register', localStorage.getItem('gameUniqueId'));
+
+  socket.emit('register', randomlyGenerateUID);
 
 
   const [state,setState] = useState({
@@ -39,6 +44,22 @@ function Board() {
         turnCount: 0,
         pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
     });
+
+  // useEffect(() => {
+  //     socket.on('new_player', () => {
+  //       setRandomlyGenerateUID(Math.floor(Math.random() * 1000000000)); //generate new randomUID
+  //     }) 
+
+  //     //ask_board_state
+  //     socket.on('ask_board_state', () => {
+  //       console.log("ask_board_state");
+  //       SendGameStateToServer();
+  //     });
+  // }, [socket]);
+  
+  
+
+
 
   useEffect(() => {
 
@@ -81,18 +102,19 @@ function Board() {
 
   } ,[socket]);
 
-  //display a warning when a page is being refreshed/closed
-  useEffect(() => {
-    //display a warning when a page is being refreshed
-    //unfortunately, you cannot make a custom message for this, only for alerts for what I know 
-    //it worked for older browsers but not for newer ones
-    window.addEventListener("beforeunload", (ev) => {
-      //ev.alert("Are you sure you want to close?");
-      ev.preventDefault();
-      return ev.returnValue = 'Are you sure you want to close?';
-    });
+  // //display a warning when a page is being refreshed/closed
+  // useEffect(() => {
+  //   //display a warning when a page is being refreshed
+  //   //unfortunately, you cannot make a custom message for this, only for alerts for what I know 
+  //   //it worked for older browsers but not for newer ones
+  //   window.addEventListener("beforeunload", (ev) => {
+  //     //ev.alert("Are you sure you want to close?");
+  //     ev.preventDefault();
+  //     return ev.returnValue = 'Are you sure you want to close?';
+  //   });
     
-  }, []);
+  // }, []);
+
     //testing purposes
     function TestConnection(){
       //console.log("test connection");
