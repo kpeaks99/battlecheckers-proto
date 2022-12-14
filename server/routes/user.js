@@ -127,24 +127,24 @@ router.post("/register", async (req,res) => {
     });
 
 
-//Authenticate
-router.get('/authme',
- async (req,res,next) =>{
-    try{
-        let token = req.headers['authorization'].split(" ")[1];
-        let decoded = jwt.verify(token,process.env.SECRET);
-        req.user = decoded;
-        next();
-    } catch(err){
-        res.status(401).json({"msg" : "Cannot Authenticate"});
-    }
-}, 
-async(req,res,next)=>{
-    let user = await player.findOne({where : {id : req.user.id},attributes: {exclude:["password"]}});
-    if (user===null){
-        res.status(404).json({"msg" : "User Not Found"});
-    }
-    res.status(200).json(user);
-});
+// //Authenticate
+// router.get('/authme',
+//  async (req,res,next) =>{
+//     try{
+//         let token = req.headers['authorization'].split(" ")[1];
+//         let decoded = jwt.verify(token,process.env.SECRET);
+//         req.user = decoded;
+//         next();
+//     } catch(err){
+//         res.status(401).json({"msg" : "Cannot Authenticate"});
+//     }
+// }, 
+// async(req,res,next)=>{
+//     let user = await player.findOne({where : {id : req.user.id},attributes: {exclude:["password"]}});
+//     if (user===null){
+//         res.status(404).json({"msg" : "User Not Found"});
+//     }
+//     res.status(200).json(user);
+// });
 
 module.exports = router;

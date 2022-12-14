@@ -7,6 +7,7 @@ import Tourney from './pages/Tourney';
 import Profile from './pages/Profile';
 import Battleboard from './pages/Battleboard';
 import MatchMaking from './pages/MatchMaking';
+import Login from './pages/Login';
 
 function App() {
   return (
@@ -18,8 +19,11 @@ function App() {
         <Link to="/tourney">Tournaments </Link>
         <Link to="/stats">Profile </Link>
         <Link to="/user/login">Title </Link>
+        <Link to="/Login">Register</Link>
       </div>
       <Routes>
+        <Route path="/Login" element={<Login/>}/>
+        <Route path="/Login/registerUser" element={<Login/>}/>
         <Route path="/user/login" element={<Title/>}/>
         <Route path="/user/registration" element={<Registration/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>

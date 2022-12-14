@@ -163,7 +163,16 @@ const io = new Server(server, {
 const statsRouter =require ("./routes/Stats");
 app.use("/Stats",statsRouter); // Enables post and get requests from the Posts route
 const loginRouter =require ("./routes/user");
+
+// CHANGED
+const newLoginRouter = require ("./routes/loginreg");
+//--------------------------------------------------------------------------
 const { sequelize,Sequelize } = require('./models');
+
+// CHANGED
+app.use("/loginreg", newLoginRouter);
+//---------------------------------------------------------------------------
+
 app.use("/user",loginRouter);  
 app.use(express.json());
 
