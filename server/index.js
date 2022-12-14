@@ -40,6 +40,20 @@ const io = new Server(server, {
     // show size of players
     const num = Object.keys(players).length;
     console.log(`player size is now: ${num+1}`);
+
+    // socket.on('register', function (data) {
+    //     if (data !== null) {
+    //         //there was something in localstorage
+    //         if (game.Players.existsUID(data)) {
+    //             player = game.Players.getByUID(data);
+    //             player.disconnected = false;
+    //         } else {
+    //             //timed out, create new player
+    //         }
+    //     } else {
+    //         //localStorage is not set, create new player
+    //     }
+    // });
     
     //give player an id when they join
     players[num] = {
@@ -113,16 +127,88 @@ const io = new Server(server, {
 
    
     //hosting a game
-    socket.on('start_game', (roomID) => {
-        
-        //set gameID to current player number, this is their room
-        players[num].gameID = roomID;
-        games[roomID] = {
-            player1: players[num],
-            player2: '',
-        };
+    socket.on('start_game', (roomID, matchMaking) => {
+
+        //if the game being started is being hosted(false), there the boardID to user
+        //
+        //else, if you are doing QuickPlay(true), don't send the boardID
+        //PRIVATE PLAY
+        if(!matchMaking)
+        {
+            //set gameID to current player number, this is their room
+            players[num].gameID = roomID;
+            games[roomID] = {
+                player1: players[num],
+                player2: '',
+            };
         console.log(games[roomID]);
         socket.emit('game_created', true, players, roomID);
+        }
+        else
+        //QUICKPLAY
+        {
+            //search for a game that is not full
+            //if games is empty, create a new game
+            if(Object.keys(games).length === 0){
+                //if no games are found, create a new game
+                //set gameID to current player number, this is their room
+                players[num].gameID = roomID;
+                games[roomID] = {
+                    player1: players[num],
+                    player2: '',
+                };
+                console.log(games[roomID]);
+                socket.emit('game_created', true, players, roomID);
+                return;
+            }
+     
+            //iterate through games to find the first game that is not full
+            for(var keys in games)
+            {
+                if(games[keys].player2 === ''){
+                    //join the game
+                    games[keys].player2 = players[num];
+                    //give the joining player(player2) the host's(player1) gameID
+                    players[num].gameID = games[keys].player1.gameID;
+                    console.log("player 2 joined");
+                    // take them to gameboard
+                    //false = black player2
+                    //true = red player1
+                    io.to(games[keys].player1.playerId).emit('begin_game', true, games[keys].player1.gameID);
+                    io.to(games[keys].player2.playerId).emit('begin_game', false, games[keys].player1.gameID);
+                    return;
+                }
+            }
+
+
+            // for(var i = 0; i < Object.keys(games).length; i++){
+            //     if(games[i].player2 === ''){
+            //         //join the game
+            //         games[i].player2 = players[num];
+            //         //give the joining player(player2) the host's(player1) gameID
+            //         players[num].gameID = games[i].player1.gameID;
+            //         console.log("player 2 joined");
+            //         // take them to gameboard
+            //         //false = black player2
+            //         //true = red player1
+            //         io.to(games[i].player1.playerId).emit('begin_game', true, games[i].player1.gameID);
+            //         io.to(games[i].player2.playerId).emit('begin_game', false, games[i].player1.gameID); 
+            //         console.log(games[i]);
+            //         // break;
+            //         return;
+            //     }
+            // }
+            //if no games are found, create a new game
+            //set gameID to current player number, this is their room
+            players[num].gameID = roomID;
+            games[roomID] = {
+                player1: players[num],
+                player2: '',
+            };
+            console.log(games[roomID]);
+            socket.emit('game_created', true, players, roomID); 
+        }
+        
     });
 
     //maybe send over the entire/updated boardgame state
@@ -137,23 +223,55 @@ const io = new Server(server, {
             }
         }})
 
+    
+    socket.on('forfeit_player', (playerColor, roomID) => {
+        console.log("forefeit");
+        if(playerColor){
+            io.to(games[roomID].player2.playerId).emit('forfeit', playerColor);
+            io.to(games[roomID].player1.playerId).emit('forfeit', playerColor);
+        }
+        else{
+            io.to(games[roomID].player1.playerId).emit('forfeit', playerColor);
+            io.to(games[roomID].player2.playerId).emit('forfeit', playerColor);
+        }
+    })
+
+        // players[num] = {
+        //     playerId: socket.id,
+        //     gameID: '',
+        // };
         //problem: the object of the player that leaves doesn't get deleted from the players array
-    // socket.on('disconnect', () => {
-            //delete user from players as they disconnect
-            //does not work when there are only two players on the server
-    //     for(var i = 0; i < Object.keys(players).length; i++){
-    //         //console.log("player " + i + " is " + players[i].playerId);
-    //         console.log(i);
-    //         if(players[i].playerId === socket.id){ 
-    //             console.log("deleted player: " + socket.id + " form position " + i);
-    //             // delete players[index];
-    //             delete players[i];
-    //             //delete socket.id;
-    //             return;  
-    //         }
-    //     }
+    socket.on('disconnect', () => {
+        //     // delete user from players as they disconnect
+        //     // does not work when there are only two players on the server
+        // for(var i = 0; i < Object.keys(players).length; i++){
+        //     //console.log("player " + i + " is " + players[i].playerId);
+        //     console.log(i);
+        //     console.log(players);
+        //     if(players[i].playerId === socket.id){ 
+        //         console.log("deleted player: " + socket.id + " form position " + i);
+        //         // delete players[index]; 
+        //         delete players[i];
+        //         console.log("after user was deleted");
+        //         console.log(players);
+        //         //delete socket.id; 
+        //         return;    
+        //     }
+        // }
+
+        //delete user from players as they disconnect
+        // for(var keys in players){
+        //     if(players[keys].playerId === socket.id){
+        //         console.log("deleted player: " + socket.id + " form position " + keys);
+        //         delete players[keys];
+        //         //players.splice(keys, 1);
+        //         console.log("after user was deleted");
+        //         console.log(players);
+        //         return;
+        //     }
+        // }
             
-    // });
+    });
 });
 
 
