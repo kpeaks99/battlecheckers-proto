@@ -77,7 +77,7 @@ const startGame= (matchMaking) => {
       <h1>{joingame}</h1>
       {/* <input type="text" placeholder="Enter Username" onChange={(e) => setUser(e.target.value)} /> */}
       <button onClick={() => {startGame(false)}}>Host Game</button>
-      <button onClick={() => {startGame(true)}}>Host Game</button>
+      <button onClick={() => {startGame(true)}}>QuickPlay</button>
       <h1>Current RoomID: {gameID}</h1>
       {/*when user hosts a game, it will display 'waiting for opponent...'*/}
       {gameID !== "" ? <h2> Waiting for opponent...</h2> : <h2></h2>}

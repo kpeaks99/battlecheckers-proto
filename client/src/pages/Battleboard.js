@@ -27,16 +27,24 @@ function Board() {
   const [playerColor, setPlayerColor] = useState(location.state.playerColor);
 
   //game connected, generate randomUID for the user to local storage
-  const [randomlyGenerateUID, setRandomlyGenerateUID] = useState(Math.floor(Math.random() * 1000000000));
+  const [randomlyGenerateUID, setRandomlyGenerateUID] = useState("");
 
+  //as soon as the page loads, register the user with the server for this game
+  //if the user is new, the server will generate a new UID for them
+  //if the user is disconnects and joins back, the user gives the server the UID that is stored in local storage
+  //    to hopefully reconnect the user to the same game
+  //socket.emit('register', randomlyGenerateUID);
+  //socket.emit('register', localStorage.getItem('gameUniqueId'));
+  const register = () => {
+    socket.emit('register', localStorage.getItem('gameUniqueId'));
+  }
   
-  localStorage.setItem('UserUID', randomlyGenerateUID);
-  console.log("randomlyGenerateUID: " + randomlyGenerateUID);
+  
+
+  // localStorage.setItem('UserUID', randomlyGenerateUID);
+  // console.log("randomlyGenerateUID: " + randomlyGenerateUID);
 
   //socket.emit('register', localStorage.getItem('gameUniqueId'));
-
-  socket.emit('register', randomlyGenerateUID);
-
 
   const [state,setState] = useState({
         squares: fillPieces(Array(64).fill(null)),
@@ -45,17 +53,22 @@ function Board() {
         pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
     });
 
-  // useEffect(() => {
-  //     socket.on('new_player', () => {
-  //       setRandomlyGenerateUID(Math.floor(Math.random() * 1000000000)); //generate new randomUID
-  //     }) 
+  //a fresh game is started, players are given UID's
+  useEffect(() => {
+    //register();
 
-  //     //ask_board_state
-  //     socket.on('ask_board_state', () => {
-  //       console.log("ask_board_state");
-  //       SendGameStateToServer();
-  //     });
-  // }, [socket]);
+      socket.on('new_player', () => {
+        setRandomlyGenerateUID(Math.floor(Math.random() * 1000000000)); //generate new randomUID
+        localStorage.setItem('UserUID', randomlyGenerateUID);
+        socket.emit('update_playerID', randomlyGenerateUID); //gameID
+      }) 
+
+      //ask_board_state
+      socket.on('ask_board_state', () => {
+        console.log("ask_board_state");
+        SendGameStateToServer();
+      });
+  }, [socket]);
   
   
 
