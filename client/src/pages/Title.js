@@ -13,7 +13,7 @@ function Title() {
 
   const handleSubmit = async e => {
     e.preventDefualt();
-    //const user = {email, password} ;
+    const user = {email, password} ;
     const response = await axios.post(
       "http://localhost:8080/user/login",user
     );
