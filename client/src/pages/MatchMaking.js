@@ -32,11 +32,11 @@ function MatchMaking() {
 //when the user clicks the start game button(or was it host game?)),
 //create a random roomID and emit it to the server
 //waits for other player to join
-const startGame= () => {
+const startGame = (matchMaking) => {
   //create random roomID 
   var randomID = Math.floor((Math.random() * 1000) + 1);
   //send randomID to server
-  socket.emit('start_game', randomID);
+  socket.emit('start_game', randomID, matchMaking);
  
  };
 
@@ -76,7 +76,8 @@ const startGame= () => {
       <button onClick={joinRoom}>Join Room</button>
       <h1>{joingame}</h1>
       {/* <input type="text" placeholder="Enter Username" onChange={(e) => setUser(e.target.value)} /> */}
-      <button onClick={startGame}>Host Game</button>
+      <button onClick={() => {startGame(false)}}>Host Game</button>
+      <button onClick={() => {startGame(true)}}>Quick Play</button>
       <h1>Current RoomID: {gameID}</h1>
       {/*when user hosts a game, it will display 'waiting for opponent...'*/}
       {gameID !== "" ? <h2> Waiting for opponent...</h2> : <h2></h2>}
@@ -86,6 +87,7 @@ const startGame= () => {
         console.log("NAVIGATING to boardgame");
         navigate("/Scenes/boardgame");
       }}>test join boardgame</button>
+
       <button onClick={() => {
         console.log("NAVIGATING to boardgame");
         navigate("../test");

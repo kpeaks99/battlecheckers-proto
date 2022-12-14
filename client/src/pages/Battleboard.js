@@ -22,8 +22,15 @@ function Board() {
   const location = useLocation(); //get information from MatchMaking.js
   const socket = useContext(SocketContext); //get socket from context/socket.js
   const gameID = location.state.gameID; //get gameID from MatchMaking.js
+  const [isForfeit, setIsForfeit] = useState(false); //used to check if the game is forfeited
 
   const [playerColor, setPlayerColor] = useState(location.state.playerColor);
+
+  //generate randomUID for the user
+  // var  randomlyGenerateUID = Math.floor(Math.random() * 1000000000);
+  // localStorage.setItem('GameUID', randomlyGenerateUID);
+
+  // socket.emit('register', randomlyGenerateUID);
 
 
   const [state,setState] = useState({
@@ -55,7 +62,37 @@ function Board() {
         console.log(state);
       });
 
+      socket.on('forfeit', (playerColor) => {
+        setIsForfeit(true);
+
+        var char = playerColor ? "RED":"BLACK";
+
+        //update document get element by id
+        console.log("player " + playerColor + " has forfeited!");
+        document.getElementById("forfeit").innerHTML = "Player " + 
+          char
+          + " has forfeited!";
+
+          //can record stuff to database here
+
+
+      });
+
+
   } ,[socket]);
+
+  //display a warning when a page is being refreshed/closed
+  useEffect(() => {
+    //display a warning when a page is being refreshed
+    //unfortunately, you cannot make a custom message for this, only for alerts for what I know 
+    //it worked for older browsers but not for newer ones
+    window.addEventListener("beforeunload", (ev) => {
+      //ev.alert("Are you sure you want to close?");
+      ev.preventDefault();
+      return ev.returnValue = 'Are you sure you want to close?';
+    });
+    
+  }, []);
     //testing purposes
     function TestConnection(){
       //console.log("test connection");
@@ -64,8 +101,7 @@ function Board() {
 
     //send board data to server
     function SendGameStateToServer(){
-      socket.emit('board_update', state, gameID, location.state.playerColor);
-      
+      socket.emit('board_update', state, gameID, location.state.playerColor);   
     }
 
     function makeBoard(state, setState) {
@@ -156,8 +192,8 @@ function Board() {
   function HandleClick(i, state, setState) {    
   if (calculateWinner(state.squares)) {
       return;
-  }                                                                                 // AND this client user is red
-  if (state.pieceClicked == -1 && state.redTurn && state.squares[i]?.color == 'Red' && location.state.playerColor) { // This checks if it is red's turn, and if piece clicked is red
+  }                                                                                 // AND this client user is red // AND nobody forfeited
+  if (state.pieceClicked == -1 && state.redTurn && state.squares[i]?.color == 'Red' && location.state.playerColor && !isForfeit) { // This checks if it is red's turn, and if piece clicked is red
     if (validMoves(i, state.squares).length == 0) return // If there is no valid moves, go back to piece selection without changing turns
     setState({
       squares: state.squares,
@@ -166,8 +202,8 @@ function Board() {
       pieceClicked: i, // Updates the current state to contain the index of piece clicked (if there are valid moves)
     })
     return;
-  }                                                                                   //  AND this client user is black
-  if (state.pieceClicked == -1 && !state.redTurn && state.squares[i]?.color == 'Black' && !location.state.playerColor) { // This checks if it is black's turn, and if piece clicked is black
+  }                                                                                   //  AND this client user is black // AND nobody forfeited
+  if (state.pieceClicked == -1 && !state.redTurn && state.squares[i]?.color == 'Black' && !location.state.playerColor && !isForfeit) { // This checks if it is black's turn, and if piece clicked is black
     if (validMoves(i, state.squares).length == 0) return; // If there is no valid moves, go back to piece selection without changing turns
     setState({
       squares: state.squares,
@@ -204,10 +240,7 @@ function Board() {
         turnCount: state.turnCount,
         pieceClicked: -1,
       })
-      SendGameStateToServer();
-      }
-      //TestConnection();
-      
+      }  
   }
 
   return;
@@ -222,6 +255,11 @@ else {
 }
   }
 
+  function Forfeit(){
+    socket.emit('forfeit_player', location.state.playerColor, gameID);
+
+  }
+
   function calculateWinner(squares) {
 if (!squares.find((piece)=>piece?.color == 'Black')) return 'Red'; // Checks if there are any Black pieces remaining. If not, Red wins
 if (!squares.find((piece)=>piece?.color == 'Red')) return 'Black'; // Checks if there are any Red pieces remaining. If not, Black wins
@@ -233,6 +271,9 @@ return null;
         {location.state.playerColor ? <h2 >You are RED</h2> : <h2>You are BLACK</h2>} 
         <div className="status">{determineStatus(state)}</div>
         {makeBoard(state, setState)}
+        <button onClick={() => {Forfeit()}}> Forefeit game </button>
+        {/* <Forefeit /> */}
+        <h2 id="forfeit"></h2>
       </div>
     );
 }

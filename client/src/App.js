@@ -13,7 +13,7 @@ function App() {
     <Router>
       <div className='sidebar'>
         <Link to="/dashboard">Dashboard </Link>
-        <Link to="/battleboard">Battleboard </Link>
+        {/* <Link to="/battleboard">Battleboard </Link> */}
         <Link to="/MatchMaking">MatchMaking </Link>
         <Link to="/tourney">Tournaments </Link>
         <Link to="/stats">Profile </Link>
