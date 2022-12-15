@@ -1,7 +1,6 @@
 import './App.css';
 import {BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
 import Dashboard from './pages/Dashboard';
-import Tourney from './pages/Tourney';
 import Profile from './pages/Profile';
 import Battleboard from './pages/Battleboard';
 import MatchMaking from './pages/MatchMaking';
@@ -45,13 +44,15 @@ function App() {
     <Router>
       <div className='sidebar'>
         <Link to="/dashboard">Dashboard </Link>
-        <Link to="/battleboard">Battleboard </Link>
+        {/* <Link to="/battleboard">Battleboard </Link> */}
+        {/* <Link to="/MatchMaking">MatchMaking </Link> */}
+        {/* <Link to="/tourney">Tournaments </Link> */}
         <Link to="/MatchMaking">MatchMaking </Link>
-        <Link to="/tourney">Tournaments </Link>
         <Link to="/stats">Profile </Link>
 
       
         {!authState.status ? (<>
+        
         <Link to="/Login">Login</Link>
         <Link to="/Register">Register</Link>
         </>
@@ -63,7 +64,7 @@ function App() {
         <Route path="/Login" element={<Login/>}/>
         <Route path="/Register" element={<Register/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
-        <Route path="/tourney" element={<Tourney/>}/>
+        {/* <Route path="/tourney" element={<Tourney/>}/> */}
         <Route path="/stats" element={<Profile/>}/>
         <Route path="/battleboard" element={<Battleboard/>}/>
         <Route path="/matchmaking" element={<MatchMaking/>}/>
