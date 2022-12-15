@@ -14,7 +14,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function App() {
-  const [authState, setAuthState] = useState(false);
+  const [authState, setAuthState] = useState({
+    username: "", 
+    id: 0, 
+    status: false});
 
   useEffect(() => {
     axios.get('http://localhost:8080/loginreg/auth', {headers: {
@@ -22,12 +25,22 @@ function App() {
     },
   }).then((response) => {
       if (response.data.error) {
-        setAuthState(false)
+        setAuthState({...authState, status: false});
       } else {
-        setAuthState(true);
+        setAuthState({
+          username: response.data.username, 
+          id: response.data.id, 
+          status: true});
       }
     });
   }, []);
+
+  const logout = () => {
+    localStorage.removeItem("webToken");
+    setAuthState({username: "", 
+    id: 0, 
+    status: false});
+  }
 
   return (
     <AuthContext.Provider value={{authState, setAuthState}}>
@@ -40,10 +53,12 @@ function App() {
         <Link to="/stats">Profile </Link>
         <Link to="/user/login">Title </Link>
       
-        {!authState && (<>
+        {!authState.status ? (<>
         <Link to="/Login">Login</Link>
         <Link to="/Register">Register</Link>
         </>
+        ) : (
+          <button onClick={logout}> Logout</button>
         )}
       </div>
       <Routes>

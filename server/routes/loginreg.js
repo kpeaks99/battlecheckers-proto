@@ -38,7 +38,7 @@ router.post("/login", async (req,res) => {
             "secret"
             );
 
-        res.json(webToken);
+        res.json({token: webToken, username: username, id: user.id});
     })
 });
 
