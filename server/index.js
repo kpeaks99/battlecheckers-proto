@@ -48,6 +48,7 @@ const io = new Server(server, {
     //give player an id when they join
     players[socket.id] = {
         playerId: socket.id,
+        playerGameUID: '',
         gameID: '',
         disconnected: false,
     };
@@ -58,27 +59,51 @@ const io = new Server(server, {
     //     player1: players[socket.id],
     //     player2: '',
     // }; 
+    //games[keys].player1.playerId
                         // v function is called as soon as the user connects
     socket.on('register',  (data) => {
         if (data !== null) {
             //there was something in localstorage
             for(keys in games){
+                console.log("game before reconnecting")
+                console.log(games)
+
+                //this doesn't work properly
+                //becuase im on the same machine, localstorage is the same for both players
+                //can't thoroughly test this
+                console.log("games[keys].player1.playerGameUID: " + games[keys].player1.playerGameUID + " data: " + data);
+                console.log("games[keys].player2.playerGameUID: " + games[keys].player2.playerGameUID + " data: " + data);
                 //if player1 or player2 is the same as the data(the user's generated id are the same) for this game
-                if(games[keys].player1.playerId == data){
+                //                      playerID
+                // games[players[socket.id].disconnected] = true;
+                console.log("this this thing on????")
+                if(games[keys].player1.playerGameUID === data && games[keys].player1.disconnected){ 
+                    console.log("@@@@@@player1 is RECONNECTING@@@@@@@");
                     //probably ask other player to give their board state
                     //give this player 
                     //games[keys].player1.playerId = data;
-                    players[socket.id].playerId = data;
+                    //players[socket.id].playerId = data;
+                    players[socket.id].playerGameUID = data;
+                    //turn keys into integer
+                    players[socket.id].gameID = Number(keys);
                     games[keys].player1 = players[socket.id];
+                    console.log("game AFTER reconnecting")
+                    console.log(games)
                     //SHOULD ALSO ASK THE OTHER PLAYER FOR THEIR BOARD STATE
                     io.to(games[keys].player2.playerId).emit('ask_board_state');
+                    return;
                 }
-                else if(games[keys].player2.playerId == data){
+                if(games[keys].player2.playerGameUID === data && games[keys].player2.disconnected){
+                    console.log("@@@@@@@@@player2 is RECONNECTING");
                     //games[keys].player2.playerId = data;
-                    players[socket.id].playerId = data;
+                    players[socket.id].playerGameUID = data;
+                    players[socket.id].gameID = Number(keys);
                     games[keys].player2 = players[socket.id];
                     //SHOULD ALSO ASK THE OTHER PLAYER FOR THEIR BOARD STATE
+                    console.log("game AFTER reconnecting")
+                    console.log(games)
                     io.to(games[keys].player1.playerId).emit('ask_board_state');
+                    return;
                 }
             }
 
@@ -88,18 +113,29 @@ const io = new Server(server, {
             // } else {
             //     //timed out, create new player
             // }
-        } else{
+        } /*else{
             //localStorage is not set, create new player
+            console.log("new player: making UID");
             io.to(socket.id).emit('new_player');
-        }
+        }*/
 
         console.log("registering player test ");
     });
 
-    socket.on('register',  (UID) => {
+    //called from MatchMaking.js
+    socket.on('update_playerID',  (UID,roomID,playerColor) => { 
         //update players.playerId to the data
-        players[socket.id].playerId = UID;
-        console.log("registering player test ");
+        players[socket.id].playerGameUID = UID;
+        // if(playerColor){
+        //     //player is red
+        //     games[roomID].player1 = players[socket.id];
+        // }
+        // else{
+        //     //player is black
+        //     games[roomID].player2 = players[socket.id];
+        // }
+        //games[roomID].player1.playerGameUID = UID;
+        console.log("updating playerID: " + UID);
     });
 
     //for testing, it's for the two players to click 
@@ -129,17 +165,23 @@ const io = new Server(server, {
     })
 
     //update the board and a player finished their turn
-    socket.on('board_update', (board, roomID, playerColor) => {
+    socket.on('board_update', (board, roomID, playerColor, reconnect) => { 
         console.log("board update");
+        // console.log(players);
+        console.log(games[roomID]); 
+
+        io.to(games[roomID].player2.playerId).emit('test_recieve',);  
+        io.to(games[roomID].player1.playerId).emit('test_recieve',);  
         //if RED player finished their turn
         if(playerColor){
             //send board and true(red) boolean to black player 
-            io.to(games[roomID].player2.playerId).emit('update_board', board, true);  
+            //console.log(games[roomID].player2.playerId); 
+            io.to(games[roomID].player2.playerId).emit('update_board', board, true, reconnect);  
         }
         //else if BLACK player finished their turn
         else
         {   //send board and false(black) boolean to red player 
-            io.to(games[roomID].player1.playerId).emit('update_board', board, false);
+            io.to(games[roomID].player1.playerId).emit('update_board', board, false,reconnect);
         }
     })
 
@@ -157,9 +199,14 @@ const io = new Server(server, {
                     //false = black player2
                     //true = red player1
                     console.log(games[roomID]);
-                    io.to(games[roomID].player1.playerId).emit('begin_game', true, roomID);
-                    io.to(games[roomID].player2.playerId).emit('begin_game', false, roomID); 
+                    //players[socket.id].playerGameUID = Math.floor(Math.random() * 1000000000);
+                    //players are also given a random number to identify themselves for when they reconnect
+                    var1 = Math.floor(Math.random() * 1000000000);
+                    var2 = Math.floor(Math.random() * 1000000000);
+                    io.to(games[roomID].player1.playerId).emit('begin_game', true, roomID, var1);
+                    io.to(games[roomID].player2.playerId).emit('begin_game', false, roomID, var2); 
                     // console.log(games[roomID]);
+                    return;
                 }
             }
         }
@@ -223,7 +270,7 @@ const io = new Server(server, {
             }
      
             //iterate through games to find the first game that is not full
-            //keys = gameID
+            //keys = gameID 
             for(var keys in games)
             {
                 if(games[keys].player2 === ''){
@@ -236,8 +283,10 @@ const io = new Server(server, {
                     //false = black player2
                     //true = red player1
                     console.log(games[keys]);
-                    io.to(games[keys].player1.playerId).emit('begin_game', true, games[keys].player1.gameID);
-                    io.to(games[keys].player2.playerId).emit('begin_game', false, games[keys].player1.gameID);
+                    var1 = Math.floor(Math.random() * 1000000000);
+                    var2 = Math.floor(Math.random() * 1000000000);
+                    io.to(games[keys].player1.playerId).emit('begin_game', true, games[keys].player1.gameID, var1);
+                    io.to(games[keys].player2.playerId).emit('begin_game', false, games[keys].player1.gameID, var2);
                     return;
                 }
             }
@@ -276,6 +325,7 @@ const io = new Server(server, {
     //maybe send over the entire/updated boardgame state
     socket.on('change_turn', (playerTurn, board, roomID) => {
         {
+            console.log(games[roomID]);
             var isGameover = false;
             if(playerTurn){
                 io.to(games[roomID].player1.playerId).emit('change_turn', playerTurn, board);
@@ -338,16 +388,37 @@ const io = new Server(server, {
         //     return player.playerId !== socket.id;
         // })
 
-        // players[socket.id].disconnected = true;
-        // //the timer is set to 10 seconds to allow the user to reconnect
-        // setTimeout(function(){
-        //     //if the user has not reconnected, delete them from the players array
-        //     if(players[socket.id].disconnected){
-        //         delete players[socket.id];
-        //     }
-        // }, 1000);
+        //games[keys].player1.playerId
+        //players[socket.id].disconnected = true; 
+
+        //if the player's game is not undefined, set the player's disconnected to true
+        if(players[socket.id].gameID !== ''){
+            console.log("player disconnected from game: " + players[socket.id].gameID + " with id: " + socket.id);
+            //have the player in games[players[socket.id].gameID] set disconnected to true
+            if(games[players[socket.id].gameID].player1.playerId === socket.id){
+                games[players[socket.id].gameID].player1.disconnected = true;
+            }
+            if(games[players[socket.id].gameID].player2.playerId === socket.id){
+                games[players[socket.id].gameID].player2.disconnected = true;
+            }
+
+            setTimeout(function(){
+                //if the user has not reconnected, delete them from the players array
+                //if(players[socket.id].disconnected){
+                if(games[players[socket.id].disconnected]){
+                    console.log("deleted player with timer: " + socket.id);
+                    //delete games[players[socket.id]];
+                    delete players[socket.id];
+                } 
+            }, 3000); 
+        }
+        else{
+            delete players[socket.id];
+        }
+        //the timer is set to 10 seconds to allow the user to reconnect
+        
     
-        delete players[socket.id];
+        //delete players[socket.id];
             
     });
 });
@@ -374,3 +445,5 @@ db.sequelize.sync().then(()=>{                            //connection to mysql 
 server.listen(3001, () => {
     console.log("Server running on port 3001");
   });
+
+//module.exports = app;
