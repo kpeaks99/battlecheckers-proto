@@ -1,76 +1,43 @@
 import React, {useState} from "react";
-import './css/title.css';
-import Axios from 'axios';
+import axios from "axios";
+import {useHistory} from 'react-router-dom'
 
-function Login(){
+function Login() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  let history = useHistory();
 
-    const [usernameReg, setUsernameReg] = useState('');
-    const [passwordReg, setPasswordReg] = useState('');
+  const login = () => {
+    const data = { username: username, password: password };
+    axios.post("http://localhost:8080/loginreg/login", data).then((response) => {
+      if (response.data.error) {
+      alert(response.data.error);
+      }else{
+      sessionStorage.setItem("webToken", response.data);
+      history.push("/")
+      }
+    });
+  };
+    return (
+    <div className="loginContainer">
+      <label>Username:</label>
+      <input
+        type="text"
+        onChange={(event) => {
+          setUsername(event.target.value);
+        }}
+      />
+      <label>Password:</label>
+      <input
+        type="password"
+        onChange={(event) => {
+          setPassword(event.target.value);
+        }}
+      />
 
-    // const user = JSON.stringify({ name: usernameReg, password: passwordReg});
-
-    // const customConfig = {
-    //     headers: {
-    //     'Content-Type': 'application/json'
-    //     }
-    // };
-
-
-    const registerUser = () => {
-        Axios.post('http://localhost:8080/loginreg/registerUser', {
-            username: usernameReg,
-            password: passwordReg,
-        }).then((response) => {
-            console.log(response);
-        });
-        console.log(usernameReg + passwordReg);
-    };
-    // const headers = {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': 'JWT fefege...'
-    //   }
-    //   const registerUser = Axios.post('http://localhost:8080/loginreg', user, {
-    //       headers: headers
-    //     })
-    //     .then((response) => {
-    //         console.log(response);
-    //     });
-    //     console.log(usernameReg + passwordReg);
-
-
-//     const usersName = JSON.stringify({ name: 'John Doe' });
-// const result = await axios.post('https://testapi.org/post', usersName);
-
-    return(
-    <div className="titlepage">
-        <div>
-        <h1>Registration</h1>
-        <label>Username</label>
-        <input type="text" 
-        onChange={(e) => {
-            setUsernameReg(e.target.value);
-        }}/>
-        <label>Password</label>
-        <input type="text"
-        onChange={(e) => {
-            setPasswordReg(e.target.value);
-        }}/>
-        <button onClick={registerUser}>Register</button>
-        </div>
-
-
-        <div>
-        <h1>Login</h1>
-        <label>Username</label>
-        <input type="text"/>
-        <label>Password</label>
-        <input type="text"/>
-        <button>Login</button>
-        </div>
+      <button onClick={login}> Login </button>
     </div>
-        
-
-    );
+  );
 }
 
 export default Login;

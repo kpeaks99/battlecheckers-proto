@@ -1,61 +1,43 @@
-const express = require("express");
-const mysql = require("mysql");
-const cors = require("cors");
+const bcrypt = require("bcrypt");
+const express =require("express");
 const router = express.Router();
 const {models} = require("../models/index.js");
-
-const app = express();
-
-app.use(express.json());
-// app.use(cors());
-
-// const db = mysql.createConnection({
-//     user: "sql9561149",
-//     host: "sql9.freemysqlhosting.net",
-//     password:"gBDbbdhaRT",
-//     database: "sql9561149",
-
-// });
+const cors = require("cors");
+const {sign} = require('jsonwebtoken');
 
 
-// app.listen(3000, () => {
-//     console.log("running server");
-// });
+router.use(cors());
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
 
-router.post('/' , async (req, res) => {
 
-    // const testUser = await testTable.create(
-
-    // )
-
-    console.log("reached registerUser");
-    console.log(req.body)
-
+router.post("/registration", async (req,res) => {
+    const {username, password} = req.body;
+    bcrypt.hash(password,10).then((hash) => {
+        testTable.create({
+            username: username,
+            password: hash
+        });
+        res.json("You have registered a user");
+    });
 });
 
-router.post('/registerUser', async (req, res) => {
+router.post("/login", async (req,res) => {
+    const {username, password} = req.body;
 
-    const data = req.body;
-    await testTable.create(data);
-    res.json(data);
+    const user = await testTable.findOne({ where: {username: username}});
 
+    if (!user) res.json({error: "User does not exist!"});
 
+    bcrypt.compare(password, user.password).then((match) => {
+        if (!match) res.json({error: "Wrong username or password"});
 
-    // const username = req.body.data;
-    // const password = req.body.data;
-    // console.log(reg.body.data);
+        const webToken = sign(
+            {username: user.username, id: user.id}, 
+            "secret"
+            );
 
-    // const { username, password } = req.body;
-    // console.log(req.body);
-
-    // db.query(
-    // "INSERT INTO testTable (username, password) VALUES (?,?)", 
-    // [username, password], 
-    // (err,res)=> {
-    // console.log(err);
-    //     }
-    // );
+        res.json(webToken);
+    })
 });
-
-
 module.exports = router;

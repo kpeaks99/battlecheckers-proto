@@ -5,8 +5,8 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require("cors");   //allows us to self refrence our computer to be both host and client
 const db = require('./models');
-
 //app.use(cors());
+
 
 //current players
 const players = {};
@@ -158,22 +158,19 @@ const io = new Server(server, {
 
 
 
-
 //Routers
 const statsRouter =require ("./routes/Stats");
 app.use("/Stats",statsRouter); // Enables post and get requests from the Posts route
-const loginRouter =require ("./routes/user");
 
-// CHANGED
-const newLoginRouter = require ("./routes/loginreg");
-//--------------------------------------------------------------------------
+const loginRouter =require ("./routes/user");
+app.use("/user",loginRouter);  
+
+const newLoginRouter =require ("./routes/loginreg");
+app.use("/loginreg", newLoginRouter);
+
+
 const { sequelize,Sequelize } = require('./models');
 
-// CHANGED
-app.use("/loginreg", newLoginRouter);
-//---------------------------------------------------------------------------
-
-app.use("/user",loginRouter);  
 app.use(express.json());
 
 const PORT = process.env.PORT || 8080;                      
@@ -187,3 +184,8 @@ db.sequelize.sync().then(()=>{                            //connection to mysql 
 server.listen(3001, () => {
     console.log("Server running on port 3001");
   });
+
+
+
+
+
