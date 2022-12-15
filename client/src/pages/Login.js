@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import axios from "axios";
-import {useHistory} from 'react-router-dom'
+import {useNavigate} from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  let history = useHistory();
+  let navigate = useNavigate();
 
   const login = () => {
     const data = { username: username, password: password };
@@ -14,7 +14,7 @@ function Login() {
       alert(response.data.error);
       }else{
       sessionStorage.setItem("webToken", response.data);
-      history.push("/")
+      navigate('/');
       }
     });
   };

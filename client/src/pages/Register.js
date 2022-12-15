@@ -15,7 +15,7 @@ function Register() {
   });
 
   const onSubmit = (data) => {
-    axios.post("http://localhost:3001/loginreg/registration", data).then(() => {
+    axios.post("http://localhost:8080/loginreg/registration", data).then(() => {
       console.log(data);
     });
   };
