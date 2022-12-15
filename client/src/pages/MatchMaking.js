@@ -60,9 +60,13 @@ const startGame= (matchMaking) => {
   });
 
   //navigate to actual checker board
-  socket.on('begin_game', (playerColor, roomID) => {
+  socket.on('begin_game', (playerColor, roomID, gameUID) => {
     //match was successful
     //link to boardgame the playerColor and gameID
+    localStorage.setItem('UserUID', gameUID);
+    socket.emit('update_playerID', localStorage.getItem('UserUID'),roomID,playerColor); //gameID
+    console.log(localStorage.getItem('UserUID') + " is the gameUID");
+    //console.log("NAVIGATING to boardgame hello hello hello hello");
     navigate('/battleboard', 
       {state: {playerColor: playerColor, gameID: roomID}});
     

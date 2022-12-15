@@ -23,11 +23,12 @@ function Board() {
   const socket = useContext(SocketContext); //get socket from context/socket.js
   const gameID = location.state.gameID; //get gameID from MatchMaking.js
   const [isForfeit, setIsForfeit] = useState(false); //used to check if the game is forfeited
+  const [isreconnect, setIsReconnect] = useState(false); //used to check if the game is reconnecting
 
   const [playerColor, setPlayerColor] = useState(location.state.playerColor);
 
   //game connected, generate randomUID for the user to local storage
-  const [randomlyGenerateUID, setRandomlyGenerateUID] = useState("");
+  const [randomlyGenerateUID, setRandomlyGenerateUID] = useState(0);
 
   //as soon as the page loads, register the user with the server for this game
   //if the user is new, the server will generate a new UID for them
@@ -35,16 +36,13 @@ function Board() {
   //    to hopefully reconnect the user to the same game
   //socket.emit('register', randomlyGenerateUID);
   //socket.emit('register', localStorage.getItem('gameUniqueId'));
-  const register = () => {
-    socket.emit('register', localStorage.getItem('gameUniqueId'));
-  }
-  
-  
 
   // localStorage.setItem('UserUID', randomlyGenerateUID);
   // console.log("randomlyGenerateUID: " + randomlyGenerateUID);
 
   //socket.emit('register', localStorage.getItem('gameUniqueId'));
+
+  // localStorage.setItem('UserUID', location.state.gameUID);
 
   const [state,setState] = useState({
         squares: fillPieces(Array(64).fill(null)),
@@ -53,23 +51,51 @@ function Board() {
         pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
     });
 
-  //a fresh game is started, players are given UID's
-  useEffect(() => {
-    //register();
-
-      socket.on('new_player', () => {
-        setRandomlyGenerateUID(Math.floor(Math.random() * 1000000000)); //generate new randomUID
-        localStorage.setItem('UserUID', randomlyGenerateUID);
-        socket.emit('update_playerID', randomlyGenerateUID); //gameID
-      }) 
-
-      //ask_board_state
-      socket.on('ask_board_state', () => {
-        console.log("ask_board_state");
-        SendGameStateToServer();
+    useEffect(() => {
+      //on first render, save the board state from local storage //JSON.parse()
+      const boardState = localStorage.getItem('checkerboardState');
+      if (boardState) {
+        setState(JSON.parse(boardState));
+      }
+      else{
+        //just fill default board
+        setState({
+        squares: fillPieces(Array(64).fill(null)),
+        redTurn: true,
+        turnCount: 0,
+        pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
       });
-  }, [socket]);
+      }
+    }, []);
+
+    useEffect(() => {
+      //store board in local storage
+      localStorage.setItem('checkerboardState', JSON.stringify(state));
+    }, [state]);
+
+  //a fresh game is started, check if player already has a UID
+  // useEffect(() => {
+  //   socket.emit('register', localStorage.getItem('UserUID'));//localStorage.getItem('UserUID')
+  // }, []);
+
+  // useEffect(() => {
+     
+  //     // //ask_board_state of other player disconnects
+  //     // socket.on('ask_board_state', () => { 
+  //     //   console.log("ask_board_state");
+  //     //   SendGameStateToServer();
+  //     // });
+  // }, [socket]);
   
+  useEffect(() => {
+    //the two players are given UID's incase they disconnect and reconnect
+    socket.on('new_player', () => {
+      setRandomlyGenerateUID(Math.floor(Math.random() * 1000000000)); //generate new randomUID
+      console.log(randomlyGenerateUID);
+      localStorage.setItem('UserUID', randomlyGenerateUID);
+      socket.emit('update_playerID', randomlyGenerateUID); //gameID
+    }) 
+  }, [randomlyGenerateUID]);
   
 
 
@@ -83,8 +109,16 @@ function Board() {
               //setResponse(data + " recieved!!");
             });
 
+      //ask_board_state of other player disconnects
+      socket.on('ask_board_state', () => { 
+        console.log("ask_board_state");
+        SendGameStateToServer(true);
+      });
+
       //recieve board data from server
-      socket.on('update_board', (boardData, changeTurn) => {
+      socket.on('update_board', (boardData, changeTurn, reconnect) => {
+        setIsReconnect(reconnect);
+        console.log("im reconnecting  "+reconnect)
         console.log("board recieved!");
         //setState(boardData);
         setState({
@@ -112,7 +146,6 @@ function Board() {
 
       });
 
-
   } ,[socket]);
 
   // //display a warning when a page is being refreshed/closed
@@ -135,12 +168,12 @@ function Board() {
     }
 
     //send board data to server
-    function SendGameStateToServer(){
-      socket.emit('board_update', state, gameID, location.state.playerColor);   
+    function SendGameStateToServer(reconnect){
+      socket.emit('board_update', state, gameID, location.state.playerColor,reconnect);   
     }
 
-    function makeBoard(state, setState) {
-      const arraySquares = state.squares.map(
+    function makeBoard(state, setState) {  
+        const arraySquares = state.squares.map(
         (square, i) => <Square
           value={square}
           onClick={() => HandleClick(i, state, setState)}
@@ -154,8 +187,8 @@ function Board() {
           {arraySquares.slice(i*8,i*8+8)}
           </div>))
       }
-
       return boardRows;
+      
   }
 
   function determineStatus(state) {
