@@ -162,9 +162,6 @@ const io = new Server(server, {
 const statsRouter =require ("./routes/Stats");
 app.use("/Stats",statsRouter); // Enables post and get requests from the Posts route
 
-const loginRouter =require ("./routes/user");
-app.use("/user",loginRouter);  
-
 const newLoginRouter =require ("./routes/loginreg");
 app.use("/loginreg", newLoginRouter);
 
