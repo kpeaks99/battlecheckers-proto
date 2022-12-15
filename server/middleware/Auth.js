@@ -8,6 +8,8 @@ const validateToken = (req,res,next) => {
 
     try{
         const validToken = verify(webToken, "secret")
+        // creates an object containing the username and id
+        req.user = validToken;
         if (validToken) {
             return next();
         }

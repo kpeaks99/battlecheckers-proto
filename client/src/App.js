@@ -9,9 +9,28 @@ import Battleboard from './pages/Battleboard';
 import MatchMaking from './pages/MatchMaking';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import { AuthContext } from './helper/AuthContext';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function App() {
+  const [authState, setAuthState] = useState(false);
+
+  useEffect(() => {
+    axios.get('http://localhost:8080/loginreg/auth', {headers: {
+      webToken: localStorage.getItem('webToken'),
+    },
+  }).then((response) => {
+      if (response.data.error) {
+        setAuthState(false)
+      } else {
+        setAuthState(true);
+      }
+    });
+  }, []);
+
   return (
+    <AuthContext.Provider value={{authState, setAuthState}}>
     <Router>
       <div className='sidebar'>
         <Link to="/dashboard">Dashboard </Link>
@@ -20,8 +39,12 @@ function App() {
         <Link to="/tourney">Tournaments </Link>
         <Link to="/stats">Profile </Link>
         <Link to="/user/login">Title </Link>
+      
+        {!authState && (<>
         <Link to="/Login">Login</Link>
         <Link to="/Register">Register</Link>
+        </>
+        )}
       </div>
       <Routes>
         <Route path="/Login" element={<Login/>}/>
@@ -34,7 +57,9 @@ function App() {
         <Route path="/battleboard" element={<Battleboard/>}/>
         <Route path="/matchmaking" element={<MatchMaking/>}/>
       </Routes>
-    </Router>);
+    </Router>
+    </AuthContext.Provider>
+  );
 }
 
 export default App;

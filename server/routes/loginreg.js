@@ -4,6 +4,7 @@ const router = express.Router();
 const {models} = require("../models/index.js");
 const cors = require("cors");
 const {sign} = require('jsonwebtoken');
+const {validateToken} = require('../middleware/Auth');
 
 
 router.use(cors());
@@ -40,4 +41,12 @@ router.post("/login", async (req,res) => {
         res.json(webToken);
     })
 });
+
+router.get('/auth', validateToken, (req,res) => {
+    res.json(req.user)
+});
+
+
+
+
 module.exports = router;
