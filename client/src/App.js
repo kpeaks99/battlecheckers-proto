@@ -1,7 +1,5 @@
 import './App.css';
 import {BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
-import Title from './pages/Title';
-import Registration from './pages/Registration';
 import Dashboard from './pages/Dashboard';
 import Tourney from './pages/Tourney';
 import Profile from './pages/Profile';
@@ -51,7 +49,7 @@ function App() {
         <Link to="/MatchMaking">MatchMaking </Link>
         <Link to="/tourney">Tournaments </Link>
         <Link to="/stats">Profile </Link>
-        <Link to="/user/login">Title </Link>
+
       
         {!authState.status ? (<>
         <Link to="/Login">Login</Link>
@@ -64,8 +62,6 @@ function App() {
       <Routes>
         <Route path="/Login" element={<Login/>}/>
         <Route path="/Register" element={<Register/>}/>
-        <Route path="/user/login" element={<Title/>}/>
-        <Route path="/user/registration" element={<Registration/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/tourney" element={<Tourney/>}/>
         <Route path="/stats" element={<Profile/>}/>

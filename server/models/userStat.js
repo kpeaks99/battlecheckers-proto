@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  userStats = sequelize.define('userStats', {
+  userStat = sequelize.define('userStat', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -19,14 +19,14 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    playerStatsId: {
+    playerStatId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: "playerStatsId"
+      unique: "playerStatId"
     }
   }, {
     sequelize,
-    tableName: 'userStats',
+    tableName: 'userStat',
     timestamps: false,
     indexes: [
       {
@@ -38,17 +38,17 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "playerStatsId",
+        name: "playerStatId",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "playerStatsId" },
+          { name: "playerStatId" },
         ]
       },
     ]
   });  
-  userStats.associate = (models) => {
-    userStats.belongsTo(models.userTable, {foreignkey: 'playerId', as: 'playerStats'})
+  userStat.associate = (models) => {    //Whatever the alias is sequelize will append 'id'
+    userStat.belongsTo(models.userTable, {foreignKey: 'playerStatId', as: 'playerStat'}) //creates a playerStatId in userStat
   }
-  return userStats;
+  return userStat;
 };
