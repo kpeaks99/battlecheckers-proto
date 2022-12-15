@@ -8,28 +8,32 @@ const {validateToken} = require('../middleware/Auth');
 
 
 router.use(cors());
+
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
 
 router.post("/registration", async (req,res) => {
-    const {username, password} = req.body;
+    const {username, password, email} = req.body;
     bcrypt.hash(password,10).then((hash) => {
-        testTable.create({
-            username: username,
-            password: hash
+        userTable.create({
+            name: username,
+            password: hash,
+            email: email
         });
-        res.json("You have registered a user");
+      
+        res.send(("You have registered a user"))
+        console.log(("user succesfully created on userTable"))
     });
 });
 
 router.post("/login", async (req,res) => {
     const {username, password} = req.body;
 
-    const user = await testTable.findOne({ where: {username: username}});
+    const user = await userTable.findOne({ where: {name: username}});
 
     if (!user) res.json({error: "User does not exist!"});
-
+    
     bcrypt.compare(password, user.password).then((match) => {
         if (!match) res.json({error: "Wrong username or password"});
 
