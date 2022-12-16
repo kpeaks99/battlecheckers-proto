@@ -1,4 +1,4 @@
-/* Styles the lighter purple div on the Title page, Login page, and Register page */
+/* Styles the lighter purple div on the Matchmaking page */
 .formContainer{
     display: flex;
     flex-direction: column;
@@ -11,5 +11,3 @@
     text-align: center;
     font-size: max(3vw, 20px);
 }
-
-

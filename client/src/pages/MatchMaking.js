@@ -1,7 +1,7 @@
 import React from 'react'
 import {useContext, useEffect,useState} from 'react'
 import {useNavigate} from "react-router-dom";
-
+import './css/matchmaking.css';
 //we take the socket from the context/socket and pass it here
 import { SocketContext } from "../context/socket";
 
@@ -71,7 +71,8 @@ const startGame= () => {
  }, /*[socket]*/)
 
   return (
-    <div>
+    <div className='pageContainer'>
+      <div className="formContainer">
       <input type="text" placeholder="Enter room number" onChange={(e) => setJoinGame(e.target.value)} />
       <button onClick={joinRoom}>Join Room</button>
       <h1>{joingame}</h1>
@@ -81,7 +82,7 @@ const startGame= () => {
       {/*when user hosts a game, it will display 'waiting for opponent...'*/}
       {gameID !== "" ? <h2> Waiting for opponent...</h2> : <h2></h2>}
 
-      {/* these bellow are for testing */}
+      {/* these bellow are for testing 
       <button onClick={() => {
         console.log("NAVIGATING to boardgame");
         navigate("/Scenes/boardgame");
@@ -89,7 +90,8 @@ const startGame= () => {
       <button onClick={() => {
         console.log("NAVIGATING to boardgame");
         navigate("../test");
-      }}>test button</button>
+      }}>test button</button>*/}
+      </div>
     </div>
 
   );

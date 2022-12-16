@@ -17,11 +17,12 @@ function Profile() {
     });
   }, {});
   return (
-    <div>
-       <h1>Profile 
-      </h1>
+    <div className='pageContainer'>
+       <h1>Profile</h1>
+      {listOfStats.map((value,key) => {return <div className="user"> {value.name}</div>
+      })}
       <div className="profile-container">
-        <div className='profile stats'>Stats
+        <div className='profile-stats'>Stats
           <p>{listOfStats.map((value,key) => {
                 return(
                       <div className ="stats">

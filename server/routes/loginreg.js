@@ -8,11 +8,10 @@ const {validateToken} = require('../middleware/Auth');
 
 
 router.use(cors());
-
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-
+// create a user and use sequelize to store it into the databse in the correct format
 router.post("/registration", async (req,res) => {
     const {username, password, email} = req.body;
     bcrypt.hash(password,10).then((hash) => {
@@ -30,18 +29,22 @@ router.post("/registration", async (req,res) => {
 router.post("/login", async (req,res) => {
     const {username, password} = req.body;
 
+    // grab the username based on what is in the body
     const user = await userTable.findOne({ where: {name: username}});
     console.log(user.name);
     if (!user) res.json({error: "User does not exist!"});
     
-    bcrypt.compare(password, user.password).then((match) => {               //matches password from req.body with password from db
+    // compare hashed password with the hashed password to ensure it is the correct user
+    bcrypt.compare(password, user.password).then((match) => {
         if (!match) res.json({error: "Wrong username or password"});
 
+        // assign the token the username and id of the user once they login
         const webToken = sign(
             {username: user.name, id: user.id}, 
             "secret"
             );
 
+        res.json({token: webToken, username: user.username, id: user.id});
         res.json({token: webToken, username: user.name, id: user.id})
         console.log(webToken)
         console.log(user.id)
