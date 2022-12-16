@@ -1,9 +1,53 @@
 body{
   margin: 0;
   padding: 0;
+  background-color: rgb(63, 59, 108);
+  color: rgb(63, 59, 108);
 }
-.sidebar {
+
+h1{
+  font-size: max(4.2vw, 50px);
+}
+
+.pageContainer{
+  height:100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
+  border-radius: 10px;
+  background-color: rgb(98, 79, 130);
+}
+
+button{
+  margin: 5px;
+  border-radius: max(2.5vw, 10px);
+  width: clamp(200px, 50% ,1000px);
+  background-color: rgb(163, 199, 214);
+  align-items: center;
+  justify-content: center;
+  font-size: max(2.5vw, 10px);
+  color: rgb(63, 59, 108);
+  border-color: rgb(63, 59, 108);
+
+}
+
+input{
+  margin: 5px;
+  border-radius: max(2.5vw, 10px);
+  width: clamp(200px, 50% ,1000px);
+  background-color: rgb(163, 199, 214);
+  align-items: center;
+  justify-content: center;
+  font-size: max(2vw, 10px);
+  color: rgb(63, 59, 108);
+  border-color: rgb(63, 59, 108);
+}
+
+.sideContainer {
   width: 10%;
+  min-width: 150px;
   height: 100vh;
   margin-right: 10px;
   border-radius: 10px;
@@ -12,6 +56,61 @@ body{
   float: left;
   align-items: center;
   vertical-align: top;
-  background-color: lightblue;
+  background-color: rgb(163, 199, 214);
+  
+}
 
+.sidebar {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  vertical-align: top;
+  text-align: left;
+  font-weight: 900;
+  padding: 5%;
+  margin: 0;
+  font-size: max(1.3vw, 20px);
+  
+}
+
+/* unvisited link */
+a:link {
+  color: rgb(70, 12, 104);
+}
+
+/* visited link */
+a:visited {
+  color: rgb(63, 59, 108);
+}
+
+/* mouse over link */
+a:hover {
+  color: rgb(203, 28, 141);
+}
+
+/* selected link */
+a:active {
+  color: blue;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgb(211, 211, 211);
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(109, 133, 143);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(41, 67, 78);
 }

@@ -2,6 +2,7 @@ import React, {useState, useContext} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import { AuthContext } from "../helper/AuthContext";
+import './css/title.css';
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -23,23 +24,31 @@ function Login() {
     });
   };
     return (
-    <div className="loginContainer">
-      <label>Username:</label>
-      <input
-        type="text"
-        onChange={(event) => {
-          setUsername(event.target.value);
-        }}
-      />
-      <label>Password:</label>
-      <input
-        type="password"
-        onChange={(event) => {
-          setPassword(event.target.value);
-        }}
-      />
+    <div className='pageContainer'>
+      <h1>Login</h1>
+      <div className="formContainer">
+        <label>Username:</label>
+        <input
+          type="text"
+          placeholder='Email'
+          required
+          onChange={(event) => {
+            setUsername(event.target.value);
+          }}
+        />
+        <label>Password:</label>
+        <input
+          type="password"
+          placeholder='Password'
+          required
+          onChange={(event) => {
+            setPassword(event.target.value);
+          }}
+        />
 
-      <button onClick={login}> Login </button>
+        <button className='login-btn' onClick={login}> Login </button>
+        <p id="message"></p> 
+      </div>
     </div>
   );
 }

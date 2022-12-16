@@ -13,13 +13,10 @@ function Dashboard() {
     });
   }, {});
   return (
-    <div>
+    <div className='pageContainer'>
       <h1>Dashboard</h1>
       <div className="dash-container">
-        <div className='dash news'>News
-          <p>gdsgds</p>
-        </div>
-        <div className='dash lead'>Leaderboard
+        <div className='dash-lead'>Leaderboard
           <p>{leaderBoardStats.map((value,key) => {       //the retrieved leaderboard stats is mapped to a key value pair
                 return(
                       <div className ="stats">

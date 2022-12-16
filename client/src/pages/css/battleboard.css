@@ -22,7 +22,7 @@ body {
   }
   
   .square {
-    border: 1px solid rgb(0, 0, 0);
+    border: 1px solid rgb(36, 34, 59);
     float: right;
     font-size: 24px;
     font-weight: bold;
@@ -37,23 +37,23 @@ body {
   }
   
   .blackSquare {
-    background: rgb(53, 59, 72);
+    background: rgb(98, 79, 130);
   }
 
   .whiteSquare {
-    background: rgb(255,255,255);
+    background: rgb(163, 199, 214);
   }
 
   .selectedSquare {
-    background: gold;
+    background: rgb(242, 247, 161);
   }
 
   .pieceBlack {
-    color: black;
+    color: rgb(36, 34, 59);
   }
 
   .pieceRed {
-    color: red;
+    color: rgb(156, 37, 77);
   }
 
   .square:focus {

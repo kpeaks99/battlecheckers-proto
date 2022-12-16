@@ -2,6 +2,7 @@ import React from "react";
 import {Formik, Form, Field, ErrorMessage} from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import './css/title.css';
 
 function Register() {
   const initialValues = {
@@ -27,7 +28,8 @@ function Register() {
   };
 
   return (
-    <div>
+    <div className='pageContainer'>
+      <h1>Register</h1>
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}
@@ -60,7 +62,7 @@ function Register() {
             type="email"
             id="inputCreatePost"
             name="email"
-            placeholder="email"
+            placeholder="Email"
           />
 
           <button type="submit"> Register</button>

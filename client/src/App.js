@@ -42,6 +42,7 @@ function App() {
   return (
     <AuthContext.Provider value={{authState, setAuthState}}>
     <Router>
+      <div className='sideContainer'>
       <div className='sidebar'>
         <Link to="/dashboard">Dashboard </Link>
         {/* <Link to="/battleboard">Battleboard </Link> */}
@@ -60,6 +61,8 @@ function App() {
           <button onClick={logout}> Logout</button>
         )}
       </div>
+      </div>
+      
       <Routes>
         <Route path="/Login" element={<Login/>}/>
         <Route path="/Register" element={<Register/>}/>

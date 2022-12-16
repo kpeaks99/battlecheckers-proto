@@ -2,30 +2,31 @@ body{
     margin: 0;
     padding: 0;
   }
-  
+
 .dash-container{
     height:100%;
     display: flex;
     justify-content: space-around;
+    width: clamp(100px, 70% , 1000px);
     align-items: stretch;
-    margin-right: 10px;
+    margin-bottom: 10px;
     border-radius: 10px;
-    background-color: rgb(228, 120, 32);
-}
-
-.dash{
-    width: 50%;
-    margin: 10px;
-    border-radius: 10px;
-    background-color: rgb(77, 19, 131);
-    min-height: 50%;
-    text-align: center;
-}
-
-.dash-news{
-    
+    background-color: rgb(159, 115, 171);
 }
 
 .dash-lead{
-    
+    width: clamp(200px, 70% ,600px);
+    height: max(90vh,100px);
+    margin: 10px;
+    border-radius: 10px;
+    background-color: rgb(163, 199, 214);
+    min-height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    overflow-x:auto;
+    font-size: max(1.5vw, 16px);
 }
+
+
