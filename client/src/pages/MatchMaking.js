@@ -63,9 +63,22 @@ const startGame= (matchMaking) => {
   socket.on('begin_game', (playerColor, roomID, gameUID) => {
     //match was successful
     //link to boardgame the playerColor and gameID
-    localStorage.setItem('UserUID', gameUID);
-    socket.emit('update_playerID', localStorage.getItem('UserUID'),roomID,playerColor); //gameID
-    console.log(localStorage.getItem('UserUID') + " is the gameUID");
+    //localStorage.setItem('UserUID', gameUID);
+    if (playerColor) {
+      localStorage.setItem('User1UID', gameUID);
+      socket.emit('update_playerID', gameUID,roomID,playerColor); //gameID
+      console.log(localStorage.getItem('User1UID') + " is the gameUID");
+    }
+    else {
+      localStorage.setItem('User2UID', gameUID);
+      socket.emit('update_playerID', gameUID,roomID,playerColor); //gameID
+      console.log(localStorage.getItem('User2UID') + " is the gameUID");
+    }
+
+    //THIS is to reset the board that was previously saved before loading into match
+    localStorage.setItem('checkerboardState', '');
+
+    //console.log(localStorage.getItem('UserUID') + " is the gameUID");
     //console.log("NAVIGATING to boardgame hello hello hello hello");
     navigate('/battleboard', 
       {state: {playerColor: playerColor, gameID: roomID}});

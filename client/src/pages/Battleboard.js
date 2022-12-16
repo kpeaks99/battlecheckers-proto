@@ -51,11 +51,25 @@ function Board() {
         pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
     });
 
+  const [statee,setStatee] = useState({
+      squares: fillPieces(Array(64).fill(null)),
+      redTurn: true,
+      turnCount: 0,
+      pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
+  });
+
     useEffect(() => {
       //on first render, save the board state from local storage //JSON.parse()
       const boardState = localStorage.getItem('checkerboardState');
       if (boardState) {
         setState(JSON.parse(boardState));
+        //setstate(prevState)
+        setState(prevState => ({
+          // ...prevState,
+          //redTurn: true,
+          ...prevState,
+          pieceClicked: -1,
+        }));
       }
       else{
         //just fill default board
@@ -68,15 +82,18 @@ function Board() {
       }
     }, []);
 
-    useEffect(() => {
-      //store board in local storage
-      localStorage.setItem('checkerboardState', JSON.stringify(state));
-    }, [state]);
+    // useEffect(() => {
+    //   //store board in local storage
+    //   localStorage.setItem('checkerboardState', JSON.stringify(state));
+    // }, [state]);
 
   //a fresh game is started, check if player already has a UID
-  // useEffect(() => {
-  //   socket.emit('register', localStorage.getItem('UserUID'));//localStorage.getItem('UserUID')
-  // }, []);
+  useEffect(() => {
+    if(location.state.playerColor)
+      socket.emit('register', localStorage.getItem('User1UID'));//localStorage.getItem('UserUID')
+    else
+      socket.emit('register', localStorage.getItem('User2UID'));
+  }, []);
 
   // useEffect(() => {
      
@@ -92,7 +109,14 @@ function Board() {
     socket.on('new_player', () => {
       setRandomlyGenerateUID(Math.floor(Math.random() * 1000000000)); //generate new randomUID
       console.log(randomlyGenerateUID);
-      localStorage.setItem('UserUID', randomlyGenerateUID);
+      if(location.state.playerColor)
+      {
+        localStorage.setItem('User1UID', randomlyGenerateUID);
+      }
+      else{
+        localStorage.setItem('User2UID', randomlyGenerateUID);
+      }
+      
       socket.emit('update_playerID', randomlyGenerateUID); //gameID
     }) 
   }, [randomlyGenerateUID]);
@@ -120,7 +144,16 @@ function Board() {
         setIsReconnect(reconnect);
         console.log("im reconnecting  "+reconnect)
         console.log("board recieved!");
-        //setState(boardData);
+        setState(boardData);
+        // setState(prevState => ({
+        //   // ...prevState,
+        //   //redTurn: true,
+        //   ...prevState,
+        //   redTurn: !changeTurn,
+        //   ...prevState,
+        //   pieceClicked: -1,
+        // }));
+
         setState({
           squares: boardData.squares,
           redTurn: !changeTurn,
@@ -207,6 +240,8 @@ function Board() {
 
   function fillPieces(squares) { // This will fill the Array, squares, with pieces. These pieces are Objects that tell which color the piece is, and whether it is a king
     return squares.map((square, i) => {
+      
+
       if (i < 24 && colorAtIndex(i) == 'blackSquare') { // Places black pieces
         return {
           color: 'Black',
@@ -299,6 +334,13 @@ function Board() {
       //send the board state and current playerColor to the server
       //TestConnection();
       SendGameStateToServer();
+      // setState({
+      //   squares: state.squares,
+      //   redTurn: state.redTurn,
+      //   turnCount: state.turnCount,
+      //   pieceClicked: -1,
+      // })
+      localStorage.setItem('checkerboardState', JSON.stringify(state));
     }
       else 
       {
@@ -309,6 +351,8 @@ function Board() {
         pieceClicked: -1,
       })
       }  
+      //store after making move
+      
   }
 
   return;
@@ -345,5 +389,6 @@ return null;
       </div>
     );
 }
+
 
 export default Board;
