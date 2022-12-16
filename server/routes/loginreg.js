@@ -44,7 +44,7 @@ router.post("/login", async (req,res) => {
             "secret"
             );
 
-        res.json({token: webToken, username: user.username, id: user.id});
+        res.json({token: webToken, username: user.name, id: user.id});
         console.log(webToken)
         console.log(user.id)
     })
