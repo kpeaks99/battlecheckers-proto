@@ -1,4 +1,3 @@
-# battlecheckers-proto
 Welcome to Battlecheckers!
 
 Our purpose is to provide a fun space for people to come together and play checkers.
