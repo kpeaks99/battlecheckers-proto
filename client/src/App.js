@@ -47,13 +47,10 @@ function App() {
       <div className='sidebar'>
         <Link to="/">Title </Link>
         <Link to="/dashboard">Dashboard </Link>
-        {/* <Link to="/battleboard">Battleboard </Link> */}
-        {/* <Link to="/MatchMaking">MatchMaking </Link> */}
-        {/* <Link to="/tourney">Tournaments </Link> */}
         <Link to="/MatchMaking">MatchMaking </Link>
         <Link to="/stats">Profile </Link>
-
       
+
         {!authState.status ? (<>
         
         <Link to="/Login">Login</Link>
@@ -71,7 +68,6 @@ function App() {
         <Route path="/Login" element={<Login/>}/>
         <Route path="/Register" element={<Register/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
-        {/* <Route path="/tourney" element={<Tourney/>}/> */}
         <Route path="/stats" element={<Profile/>}/>
         <Route path="/battleboard" element={<Battleboard/>}/>
         <Route path="/matchmaking" element={<MatchMaking/>}/>
