@@ -107,9 +107,7 @@ function Board() {
         var char = playerColor ? "RED":"BLACK";
         //update document get element by id
         console.log("player " + playerColor + " has forfeited!");
-        document.getElementById("forfeit").innerHTML = "Player " + 
-          char
-          + " has forfeited!";
+        document.getElementById("forfeit").innerHTML = "Player " + char + " has forfeited!";
 
           //can record stuff to database here
       });
@@ -146,6 +144,7 @@ function Board() {
     let status;
     if (winner) {
       status = 'Winner: ' + winner;
+      //This is where game ends
       //may send data to database for win/loss
 
     } else {
