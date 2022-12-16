@@ -1,3 +1,4 @@
+/* Styles the lighter purple div on the Title page, Login page, and Register page */
 .formContainer{
     display: flex;
     flex-direction: column;

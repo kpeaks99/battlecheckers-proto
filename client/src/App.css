@@ -1,3 +1,6 @@
+/*
+This file applies the overall styling of the entire web app
+*/
 body{
   margin: 0;
   padding: 0;
@@ -8,10 +11,12 @@ body{
   justify-content: space-between;
 }
 
+/* Header styling */
 h1{
   font-size: max(4.2vw, 50px);
 }
 
+/* Styles the overall dark purple div of every page */
 .pageContainer{
   height:100%;
   display: flex;
@@ -23,6 +28,7 @@ h1{
   background-color: rgb(98, 79, 130);
 }
 
+/* Styles all buttons of every page */
 button{
   margin: 5px;
   border-radius: max(2.5vw, 10px);
@@ -36,6 +42,7 @@ button{
 
 }
 
+/* Styles all inputs of every page */
 input{
   margin: 5px;
   border-radius: max(2.5vw, 10px);
@@ -48,6 +55,7 @@ input{
   border-color: rgb(63, 59, 108);
 }
 
+/* Styles the blue side navigation bar */
 .sideContainer {
   width: 10%;
   min-width: 150px;
@@ -63,6 +71,7 @@ input{
   
 }
 
+/* Organizes the links in the nav bar */
 .sidebar {
   width: 90%;
   display: flex;
@@ -118,6 +127,7 @@ a:active {
   background: rgb(41, 67, 78);
 }
 
+/* Styles the logout button so it fits with the nav bar */
 .logout{
   width: 90%;
   display: flex;
@@ -131,6 +141,7 @@ a:active {
   transition-duration: 0.4s;
 }
 
+/* Button on hover */
 .logout:hover {
   background-color: rgb(203, 28, 141);
   color: white;

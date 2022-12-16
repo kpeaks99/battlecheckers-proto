@@ -1,8 +1,11 @@
+/* Styles the Profile page */
+
 h1{
     margin: 0;
     padding: 0;
 }
 
+/* These classes organize the divs and text on the page */
 .profile-container{
     height:100%;
     display: flex;
