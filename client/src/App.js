@@ -5,6 +5,7 @@ import Profile from './pages/Profile';
 import Battleboard from './pages/Battleboard';
 import MatchMaking from './pages/MatchMaking';
 import Login from './pages/Login';
+import Title from './pages/Title';
 import Register from './pages/Register';
 import { AuthContext } from './helper/AuthContext';
 import { useState, useEffect } from 'react';
@@ -44,6 +45,7 @@ function App() {
     <Router>
       <div className='sideContainer'>
       <div className='sidebar'>
+        <Link to="/">Title </Link>
         <Link to="/dashboard">Dashboard </Link>
         {/* <Link to="/battleboard">Battleboard </Link> */}
         {/* <Link to="/MatchMaking">MatchMaking </Link> */}
@@ -58,12 +60,14 @@ function App() {
         <Link to="/Register">Register</Link>
         </>
         ) : (
-          <button onClick={logout}> Logout</button>
+          <button className='logout' onClick={logout}> Logout</button>
         )}
       </div>
       </div>
       
+      
       <Routes>
+        <Route path="/" element={<Title/>}/>
         <Route path="/Login" element={<Login/>}/>
         <Route path="/Register" element={<Register/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
@@ -73,7 +77,9 @@ function App() {
         <Route path="/matchmaking" element={<MatchMaking/>}/>
       </Routes>
     </Router>
+    
     </AuthContext.Provider>
+    
   );
 }
 

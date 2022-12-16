@@ -3,6 +3,9 @@ body{
   padding: 0;
   background-color: rgb(63, 59, 108);
   color: rgb(63, 59, 108);
+  background-image: url('./pages/css/checker-game-pieces-clip-art.png');
+  background-repeat: repeat;
+  justify-content: space-between;
 }
 
 h1{
@@ -113,4 +116,22 @@ a:active {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(41, 67, 78);
+}
+
+.logout{
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  vertical-align: top;
+  text-align: left;
+  font-weight: 900;
+  padding: 1%;
+  margin: 10px;
+  font-size: max(1.3vw, 20px);
+  transition-duration: 0.4s;
+}
+
+.logout:hover {
+  background-color: rgb(203, 28, 141);
+  color: white;
 }
