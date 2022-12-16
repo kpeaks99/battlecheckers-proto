@@ -252,7 +252,7 @@ function Board() {
       SendGameStateToServer();
       setState({
         squares: state.squares,
-        redTurn: state.redTurn,
+        redTurn: !state.redTurn,
         turnCount: state.turnCount,
         pieceClicked: -1,
       })
