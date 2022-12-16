@@ -25,24 +25,11 @@ function Board() {
   const [isForfeit, setIsForfeit] = useState(false); //used to check if the game is forfeited
   const [isreconnect, setIsReconnect] = useState(false); //used to check if the game is reconnecting
 
-  const [playerColor, setPlayerColor] = useState(location.state.playerColor);
+  //const [playerColor, setPlayerColor] = useState(location.state.playerColor);
 
   //game connected, generate randomUID for the user to local storage
-  const [randomlyGenerateUID, setRandomlyGenerateUID] = useState(0);
+  //const [randomlyGenerateUID, setRandomlyGenerateUID] = useState(0);
 
-  //as soon as the page loads, register the user with the server for this game
-  //if the user is new, the server will generate a new UID for them
-  //if the user is disconnects and joins back, the user gives the server the UID that is stored in local storage
-  //    to hopefully reconnect the user to the same game
-  //socket.emit('register', randomlyGenerateUID);
-  //socket.emit('register', localStorage.getItem('gameUniqueId'));
-
-  // localStorage.setItem('UserUID', randomlyGenerateUID);
-  // console.log("randomlyGenerateUID: " + randomlyGenerateUID);
-
-  //socket.emit('register', localStorage.getItem('gameUniqueId'));
-
-  // localStorage.setItem('UserUID', location.state.gameUID);
 
   const [state,setState] = useState({
         squares: fillPieces(Array(64).fill(null)),
@@ -51,26 +38,18 @@ function Board() {
         pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
     });
 
-  const [statee,setStatee] = useState({
-      squares: fillPieces(Array(64).fill(null)),
-      redTurn: true,
-      turnCount: 0,
-      pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
-  });
-
     useEffect(() => {
       //on first render, save the board state from local storage //JSON.parse()
       const boardState = localStorage.getItem('checkerboardState');
       if (boardState) {
         setState(JSON.parse(boardState));
         //setstate(prevState)
+        //for some reason there is a rendering issue with the board state
+        //have to use prevState to set the board state
         setState(prevState => ({
-          //  ...prevState,
-          // redTurn: true,
           squares: prevState.squares,
           redTurn: !prevState.redTurn,
           turnCount: prevState.turnCount,
-          //...prevState,
           pieceClicked: -1,
         }));
       }
@@ -85,12 +64,7 @@ function Board() {
       }
     }, []);
 
-    // useEffect(() => {
-    //   //store board in local storage
-    //   localStorage.setItem('checkerboardState', JSON.stringify(state));
-    // }, [state]);
-
-  //a fresh game is started, check if player already has a UID
+  //a fresh game is started, check if player already has a UID and maybe reconnect them to the game
   useEffect(() => {
     if(location.state.playerColor)
       socket.emit('register', localStorage.getItem('User1UID'));//localStorage.getItem('UserUID')
@@ -98,37 +72,7 @@ function Board() {
       socket.emit('register', localStorage.getItem('User2UID'));
   }, []);
 
-  // useEffect(() => {
-     
-  //     // //ask_board_state of other player disconnects
-  //     // socket.on('ask_board_state', () => { 
-  //     //   console.log("ask_board_state");
-  //     //   SendGameStateToServer();
-  //     // });
-  // }, [socket]);
-  
   useEffect(() => {
-    //the two players are given UID's incase they disconnect and reconnect
-    socket.on('new_player', () => {
-      setRandomlyGenerateUID(Math.floor(Math.random() * 1000000000)); //generate new randomUID
-      console.log(randomlyGenerateUID);
-      if(location.state.playerColor)
-      {
-        localStorage.setItem('User1UID', randomlyGenerateUID);
-      }
-      else{
-        localStorage.setItem('User2UID', randomlyGenerateUID);
-      }
-      
-      socket.emit('update_playerID', randomlyGenerateUID); //gameID
-    }) 
-  }, [randomlyGenerateUID]);
-  
-
-
-
-  useEffect(() => {
-
       //testing purposes
       socket.on('test_recieve', (data) => {
               console.log("test connection recieved!");
@@ -145,18 +89,9 @@ function Board() {
       //recieve board data from server
       socket.on('update_board', (boardData, changeTurn, reconnect) => {
         setIsReconnect(reconnect);
-        console.log("im reconnecting  "+reconnect)
         console.log("board recieved!");
-        setState(boardData);
-        // setState(prevState => ({
-        //   // ...prevState,
-        //   //redTurn: true,
-        //   ...prevState,
-        //   redTurn: !changeTurn,
-        //   ...prevState,
-        //   pieceClicked: -1,
-        // }));
-
+        //setState(boardData);
+        //update the board state
         setState({
           squares: boardData.squares,
           redTurn: !changeTurn,
@@ -166,11 +101,10 @@ function Board() {
         console.log(state);
       });
 
+      //recieve a message on who forfeited
       socket.on('forfeit', (playerColor) => {
         setIsForfeit(true);
-
         var char = playerColor ? "RED":"BLACK";
-
         //update document get element by id
         console.log("player " + playerColor + " has forfeited!");
         document.getElementById("forfeit").innerHTML = "Player " + 
@@ -182,24 +116,6 @@ function Board() {
 
   } ,[socket]);
 
-  // //display a warning when a page is being refreshed/closed
-  // useEffect(() => {
-  //   //display a warning when a page is being refreshed
-  //   //unfortunately, you cannot make a custom message for this, only for alerts for what I know 
-  //   //it worked for older browsers but not for newer ones
-  //   window.addEventListener("beforeunload", (ev) => {
-  //     //ev.alert("Are you sure you want to close?");
-  //     ev.preventDefault();
-  //     return ev.returnValue = 'Are you sure you want to close?';
-  //   });
-    
-  // }, []);
-
-    //testing purposes
-    function TestConnection(){
-      //console.log("test connection");
-      socket.emit('test_connection', gameID);
-    }
 
     //send board data to server
     function SendGameStateToServer(reconnect){
@@ -335,12 +251,12 @@ function Board() {
       //send the board state and current playerColor to the server
       //TestConnection();
       SendGameStateToServer();
-      // setState({
-      //   squares: state.squares,
-      //   redTurn: state.redTurn,
-      //   turnCount: state.turnCount,
-      //   pieceClicked: -1,
-      // })
+      setState({
+        squares: state.squares,
+        redTurn: state.redTurn,
+        turnCount: state.turnCount,
+        pieceClicked: -1,
+      })
       localStorage.setItem('checkerboardState', JSON.stringify(state));
     }
       else 

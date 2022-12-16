@@ -14,6 +14,7 @@ function MatchMaking() {
   const [gameID, setGameID] = useState("");
   const [joingame, setJoinGame] = useState("");
 
+  //when the user clicks the join game button(with the right code), send the room number to the server
   const joinRoom = () => {
     //setJoinGame(joingame);
       if (joingame !== "") {
@@ -47,7 +48,7 @@ const startGame= (matchMaking) => {
     alert("Player " + data.user + " joined room " + data.room);
   })
 
-  // starting game
+  // host game until a player joins
   socket.on('game_created', (isGameCreated,players,roomID) => {
     //if isGameCreated is true, set this current player's gameID to roomID
     if (isGameCreated) {
@@ -63,7 +64,8 @@ const startGame= (matchMaking) => {
   socket.on('begin_game', (playerColor, roomID, gameUID) => {
     //match was successful
     //link to boardgame the playerColor and gameID
-    //localStorage.setItem('UserUID', gameUID);
+
+    //setting UID for player 1 and 2
     if (playerColor) {
       localStorage.setItem('User1UID', gameUID);
       socket.emit('update_playerID', gameUID,roomID,playerColor); //gameID
@@ -98,18 +100,7 @@ const startGame= (matchMaking) => {
       <h1>Current RoomID: {gameID}</h1>
       {/*when user hosts a game, it will display 'waiting for opponent...'*/}
       {gameID !== "" ? <h2> Waiting for opponent...</h2> : <h2></h2>}
-
-      {/* these bellow are for testing */}
-      <button onClick={() => {
-        console.log("NAVIGATING to boardgame");
-        navigate("/Scenes/boardgame");
-      }}>test join boardgame</button>
-      <button onClick={() => {
-        console.log("NAVIGATING to boardgame");
-        navigate("../test");
-      }}>test button</button>
     </div>
-
   );
 }
 
