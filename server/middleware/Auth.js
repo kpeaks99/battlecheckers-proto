@@ -9,7 +9,8 @@ const validateToken = (req,res,next) => {
     try{
         const validToken = verify(webToken, "secret")
         // creates an object containing the username and id
-        req.user = validToken;
+        req.user = validToken;  //user is a variable
+       // console.log(req.user.id)
         if (validToken) {
             return next();
         }

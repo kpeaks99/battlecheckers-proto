@@ -4,19 +4,22 @@ import {useEffect, useState} from "react"
 
 function Profile() {
   const [listOfStats, setListOfStats] = useState([]);
+  const [user, setUser] = useState({
+    username: "",
+    id: 0,
+  });
 
   useEffect(() => {
-    axios.get("http://localhost:8080/stats").then((response) => {       //axios call to route stats
-      console.log(response);                                            //console logs user stat
-      setListOfStats(response.data);                                    //store response data in list of stats
+   
+    axios.get("http://localhost:8080/stats",user).then((response) => {
+      console.log(response);  
+      setListOfStats(response.data);
     });
   }, {});
   return (
     <div>
        <h1>Profile 
       </h1>
-      {listOfStats.map((value,key) => {return <div className="user"> {value.name}</div>
-      })}
       <div className="profile-container">
         <div className='profile stats'>Stats
           <p>{listOfStats.map((value,key) => {
@@ -39,3 +42,4 @@ function Profile() {
 }
 
 export default Profile
+

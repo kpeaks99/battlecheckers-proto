@@ -1,12 +1,11 @@
 const express =require("express");
 const router = express.Router();
-const cors = require("cors");
-const {models} = require("../models/index.js");  //allows us to use the models for sequelize 
-
-router.use(cors());// lets router use Cors
+const {models} = require("../models/index.js");
+const {sign} = require('jsonwebtoken');
+const {validateToken} = require('../middleware/Auth');
 
 router.get("/", async (req,res)=>{ //Fetches all player stats
-  
+
   const playerStats = await userTable.findAll(
         {   where: {id: 1},
             attributes: ['name'],
@@ -22,16 +21,17 @@ router.get("/", async (req,res)=>{ //Fetches all player stats
     console.log("Stats have been recieved");
     console.log(JSON.stringify(playerStats,null,2));
 
+
+})
 router.post("/", async (req,res) => { 
     const stats = req.body;
     await userStats.create(stats);
     res.json(stats);
 })
-})
 
 router.get("/leaderboard", async (req,res)=>{ //Fetches all player stats for leaderboard
     const leaderStats = await userStat.findAll(
-        {   order: [['wins', 'DESC']],          //Starting from the top, highest Wins to the lowest wins
+        {   order: [['wins', 'DESC']],
             include:
             [{
                 model: userTable, as :'playerStat',

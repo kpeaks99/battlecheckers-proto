@@ -31,23 +31,26 @@ router.post("/login", async (req,res) => {
     const {username, password} = req.body;
 
     const user = await userTable.findOne({ where: {name: username}});
-
+    console.log(user.name);
     if (!user) res.json({error: "User does not exist!"});
     
-    bcrypt.compare(password, user.password).then((match) => {
+    bcrypt.compare(password, user.password).then((match) => {               //matches password from req.body with password from db
         if (!match) res.json({error: "Wrong username or password"});
 
         const webToken = sign(
-            {username: user.username, id: user.id}, 
+            {username: user.name, id: user.id}, 
             "secret"
             );
 
-        res.json({token: webToken, username: username, id: user.id});
+        res.json({token: webToken, username: user.name, id: user.id})
+        console.log(webToken)
+        console.log(user.id)
     })
 });
 
 router.get('/auth', validateToken, (req,res) => {
-    res.json(req.user)
+    res.json(req.username)
+    console.log(req.username)
 });
 
 

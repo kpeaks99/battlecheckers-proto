@@ -18,7 +18,8 @@ function Login() {
       }else{
       localStorage.setItem("webToken", response.data.token);
       setAuthState({username: response.data.username, id: response.data.id, status: true});
-      navigate('/');
+      console.log("LOGIN SUCCESS GOING TO PROFILE")
+      navigate('/stats');
       }
     });
   };
