@@ -40,15 +40,23 @@ function App() {
     status: false});
   }
 
+  const [loggedIn, setLoggedIn] = useState(false);
+
   return (
     <AuthContext.Provider value={{authState, setAuthState}}>
     <Router>
       <div className='sideContainer'>
       <div className='sidebar'>
         <Link to="/">Title </Link>
-        <Link to="/dashboard">Dashboard </Link>
-        <Link to="/MatchMaking">MatchMaking </Link>
-        <Link to="/stats">Profile </Link>
+
+          {localStorage.getItem('webToken') && (   
+          <>
+          <Link to="/dashboard">Dashboard </Link>
+          <Link to="/MatchMaking">MatchMaking </Link>
+          <Link to="/stats">Profile </Link>
+          </>
+          )} 
+       
       
 
         {!authState.status ? (<>
@@ -65,7 +73,7 @@ function App() {
       
       <Routes>
         <Route path="/" element={<Title/>}/>
-        <Route path="/Login" element={<Login/>}/>
+        <Route path="/Login" element={() => <Login setLoggedIn={setLoggedIn}/>}/>
         <Route path="/Register" element={<Register/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/stats" element={<Profile/>}/>

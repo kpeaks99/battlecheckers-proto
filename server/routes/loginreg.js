@@ -38,6 +38,7 @@ router.post("/login", async (req,res) => {
     bcrypt.compare(password, user.password).then((match) => {
         if (!match) res.json({error: "Wrong username or password"});
 
+        // assign the token the username and id of the user once they login
         const webToken = sign(
             {username: user.username, id: user.id}, 
             "secret"

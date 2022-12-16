@@ -14,9 +14,11 @@ function Login() {
   const login = () => {
     const data = { username: username, password: password };
     axios.post("http://localhost:8080/loginreg/login", data).then((response) => {
+      // identifies error if there are any
       if (response.data.error) {
       alert(response.data.error);
       }else{
+      // pass in the actual webToken key as an Item in the local storage.
       localStorage.setItem("webToken", response.data.token);
       setAuthState({username: response.data.username, id: response.data.id, status: true});
       navigate('/');
