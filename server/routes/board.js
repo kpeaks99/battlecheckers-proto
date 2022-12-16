@@ -22,20 +22,22 @@ router.post("/end", async (req,res)=>{
 
 })
 
-router.post("/winner", async (req,res) => { 
-    const winnerId = req.body.id;
+router.post("/updatestats", async (req,res) => { 
+    const winnerId = req.body.winnerId;
     const winner = await userStats.findByPk(winnerId);
     await sequelize.transaction(async t =>{
         await winner.increment(['wins'])
+    }) 
+    const loserId = req.body.loserId;
+    const loser = await userStats.findByPk(loserId);
+    await sequelize.transaction(async t =>{
+        await loser.increment(['losts'])
     })
-    res.json(stats);
+    res.json(winner);
+    res.json(loser);
 })
 
-router.post("/loser", async (req,res) => { 
-    const stats = req.body;
-    await userStats.create(stats);
-    res.json(stats);
-})
+
 
 
 module.exports = router; //in order to access this router in index.js
