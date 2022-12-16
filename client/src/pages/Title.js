@@ -1,4 +1,4 @@
-import axios from 'axios';
+//import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/title.css';
@@ -14,12 +14,12 @@ function Title() {
   const handleSubmit = async e => {
     e.preventDefualt();
     //const user = {email, password} ;
-    const response = await axios.post(
-      "http://localhost:8080/user/login",user
-    );
-    setUser(response.data)
-    localStorage.setItem('user', response.data)
-    console.log(response.data)
+    // const response = await axios.post(
+    //   "http://localhost:8080/user/login",user
+    // );
+    // setUser(response.data)
+    // localStorage.setItem('user', response.data)
+    // console.log(response.data)
   };
 
  

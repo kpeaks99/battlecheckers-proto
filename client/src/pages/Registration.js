@@ -1,4 +1,4 @@
-import axios from 'axios';
+// import axios from 'axios';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
@@ -14,13 +14,13 @@ function Registration() {
     e.preventDefault();
     const user = {username, email};
     console.log(user);
-    const response = await axios.post(
-      "http://localhost:8080/user/register",
-      user,{
-      headers: {
-        'Access-Control-Allow-Origin': true,
-      }},
-    )
+    // const response = await axios.post(
+    //   "http://localhost:8080/user/register",
+    //   user,{
+    //   headers: {
+    //     'Access-Control-Allow-Origin': true,
+    //   }},
+    // )
     let path = "/user/login" //affter successful regisgration go to login page
     navigate(path);
   };

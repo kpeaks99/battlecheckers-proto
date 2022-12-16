@@ -1,16 +1,16 @@
 import './css/profile.css';
-import axios from "axios";
+// import axios from "axios";
 import {useEffect, useState} from "react"
 
 function Profile() {
   const [listOfStats, setListOfStats] = useState([]);
 
-  useEffect(() => {
-    axios.get("http://localhost:8080/stats").then((response) => {
-      console.log(response);  
-      setListOfStats(response.data);
-    });
-  }, {});
+  // useEffect(() => {
+  //   axios.get("http://localhost:8080/stats").then((response) => {
+  //     console.log(response);  
+  //     setListOfStats(response.data);
+  //   });
+  // }, {});
   return (
     <div>
        <h1>Profile 
