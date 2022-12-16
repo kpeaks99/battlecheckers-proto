@@ -6,7 +6,7 @@ const {validateToken} = require('../middleware/Auth');
 
 router.post("/end", async (req,res)=>{ 
     const {red, black, winner} = req.body;      //get data sent to this route
-  const playerStats = await boardState.create(
+  const boardStats = await boardState.create(
         {   
             redUserId: red,     //id for red
             blackId: black,     // id for black
@@ -15,9 +15,9 @@ router.post("/end", async (req,res)=>{
 
         );
 
-    res.json(playerStats);
-    console.log("Stats have been recieved");
-    console.log(JSON.stringify(playerStats,null,2));
+    res.json(boardStats);
+    console.log("Board Stats have been recieved");
+    console.log(JSON.stringify(boardStats,null,2));
 
 
 })

@@ -47,12 +47,13 @@ router.post("/login", async (req,res) => {
         res.json({token: webToken, username: user.name, id: user.id});
         console.log(webToken)
         console.log(user.id)
+        console.log(user.name)
     })
 });
 
 router.get('/auth', validateToken, (req,res) => {
-    res.json(req.username)
-    console.log(req.username)
+    res.json(req.user)
+  //  console.log(req.user)
 });
 
 

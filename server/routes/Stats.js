@@ -4,10 +4,11 @@ const {models} = require("../models/index.js");
 const {sign} = require('jsonwebtoken');
 const {validateToken} = require('../middleware/Auth');
 
-router.get("/", async (req,res)=>{ //Fetches all player stats
-
+router.get("/",validateToken, async (req,res)=>{ //Fetches all player stats
+  const userId = req.user.id;
+  console.log(userId);
   const playerStats = await userTable.findAll(
-        {   where: {id: 1},
+        {   where: {id: userId},
             attributes: ['name'],
             include: 
             [ {
@@ -19,7 +20,7 @@ router.get("/", async (req,res)=>{ //Fetches all player stats
 
     res.json(playerStats);
     console.log("Stats have been recieved");
-    console.log(JSON.stringify(playerStats,null,2));
+  //  console.log(JSON.stringify(playerStats,null,2));
 
 
 })

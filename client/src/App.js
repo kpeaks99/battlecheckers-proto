@@ -52,7 +52,7 @@ function App() {
           <>
           <Link to="/dashboard">Dashboard </Link>
           <Link to="/MatchMaking">MatchMaking </Link>
-          <Link to="/stats">Profile </Link>
+          <Link to="/Profile">Profile </Link>
           </>
           )} 
        

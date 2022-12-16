@@ -110,6 +110,8 @@ function Board() {
         document.getElementById("forfeit").innerHTML = "Player " + char + " has forfeited!";
 
           //can record stuff to database here
+          
+          
       });
 
   } ,[socket]);

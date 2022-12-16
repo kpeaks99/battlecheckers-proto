@@ -1,17 +1,16 @@
 import './css/profile.css';
 import axios from "axios";
-import {useEffect, useState} from "react"
+import {useEffect, useState, useContext} from "react"
+import { AuthContext } from "../helper/AuthContext";
+
 
 function Profile() {
   const [listOfStats, setListOfStats] = useState([]);
-  const [user, setUser] = useState({
-    username: "",
-    id: 0,
-  });
-
+  const {authState} = useContext(AuthContext);
   useEffect(() => {
    
-    axios.get("http://localhost:8080/stats",user).then((response) => {
+    axios.get("http://localhost:8080/stats",{headers: {
+      webToken: localStorage.getItem('webToken')}}).then((response) => {
       console.log(response);  
       setListOfStats(response.data);
     });
@@ -19,11 +18,9 @@ function Profile() {
   return (
     <div className='pageContainer'>
        <h1>Profile</h1>
-      {listOfStats.map((value,key) => {return <div className="user"> {value.name}</div>
-      })}
       <div className="profile-container">
         <div className='profile-stats'>Stats
-          <p>{listOfStats.map((value,key) => {
+        <p>{listOfStats.map((value,key) => {
                 return(
                       <div className ="stats">
                         <div className ="player"> UserName: {value.name}</div>
@@ -34,7 +31,7 @@ function Profile() {
                 );
             
           })}
-          </p>  
+          </p> 
         </div>
 
       </div>

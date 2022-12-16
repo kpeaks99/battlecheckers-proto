@@ -7,7 +7,7 @@ import './css/title.css';
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const {setAuthState} = useContext(AuthContext);
+  const {authState ,setAuthState} = useContext(AuthContext);
 
   let navigate = useNavigate();
 
@@ -20,8 +20,8 @@ function Login() {
       }else{
       // pass in the actual webToken key as an Item in the local storage.
       localStorage.setItem("webToken", response.data.token);
-      setAuthState({username: response.data.username, id: response.data.id, status: true});
-      console.log("LOGIN SUCCESS GOING TO PROFILE")
+      setAuthState(response.data);
+      console.log("LOGIN SUCCESS GOING TO PROFILE" + authState)
       navigate('/stats');
       }
     });

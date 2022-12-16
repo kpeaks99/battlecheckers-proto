@@ -1,11 +1,14 @@
+import axios from 'axios';
 import React from 'react'
 import {useContext, useEffect,useState} from 'react'
 import {useNavigate} from "react-router-dom";
+import { AuthContext } from "../helper/AuthContext";
 
 //we take the socket from the context/socket and pass it here
 import { SocketContext } from "../context/socket";
 
 function MatchMaking() {
+  
   const navigate = useNavigate();
 
   //this is the same socket from the context
@@ -29,15 +32,36 @@ function MatchMaking() {
       else
         console.log("join is empty ")
    };
-
+   const [authState, setAuthState] = useState({
+    username: "", 
+    id: 0, 
+    status: false});
 //when the user clicks the start game button(or was it host game?)),
 //create a random roomID and emit it to the server
 //waits for other player to join
 const startGame= (matchMaking) => {
+  
+
+  axios.get('http://localhost:8080/loginreg/auth', {headers: {
+    webToken: localStorage.getItem('webToken'),
+  },
+}).then((response) => {
+    if (response.data.error) {
+      setAuthState({...authState, status: false});
+    } else {
+      setAuthState({
+        username: response.data.username, 
+        id: response.data.id, 
+        status: true});
+    }
+  });
+
+
   //create random roomID 
   var randomID = Math.floor((Math.random() * 1000) + 1);
   //send randomID to server
   socket.emit('start_game', randomID,matchMaking);
+
  
  };
 
@@ -67,12 +91,12 @@ const startGame= (matchMaking) => {
 
     //setting UID for player 1 and 2
     if (playerColor) {
-      localStorage.setItem('User1UID', gameUID);
+      localStorage.setItem('User1UID', gameUID); //Red
       socket.emit('update_playerID', gameUID,roomID,playerColor); //gameID
       console.log(localStorage.getItem('User1UID') + " is the gameUID");
     }
     else {
-      localStorage.setItem('User2UID', gameUID);
+      localStorage.setItem('User2UID', gameUID); //Black
       socket.emit('update_playerID', gameUID,roomID,playerColor); //gameID
       console.log(localStorage.getItem('User2UID') + " is the gameUID");
     }
