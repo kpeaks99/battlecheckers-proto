@@ -22,8 +22,13 @@ function Board() {
   const location = useLocation(); //get information from MatchMaking.js
   const socket = useContext(SocketContext); //get socket from context/socket.js
   const gameID = location.state.gameID; //get gameID from MatchMaking.js
+  const [isForfeit, setIsForfeit] = useState(false); //used to check if the game is forfeited
+  const [isreconnect, setIsReconnect] = useState(false); //used to check if the game is reconnecting
 
-  const [playerColor, setPlayerColor] = useState(location.state.playerColor);
+  //const [playerColor, setPlayerColor] = useState(location.state.playerColor);
+
+  //game connected, generate randomUID for the user to local storage
+  //const [randomlyGenerateUID, setRandomlyGenerateUID] = useState(0);
 
 
   const [state,setState] = useState({
@@ -33,8 +38,41 @@ function Board() {
         pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
     });
 
-  useEffect(() => {
+    useEffect(() => {
+      //on first render, save the board state from local storage //JSON.parse()
+      const boardState = localStorage.getItem('checkerboardState');
+      if (boardState) {
+        setState(JSON.parse(boardState));
+        //setstate(prevState)
+        //for some reason there is a rendering issue with the board state
+        //have to use prevState to set the board state
+        setState(prevState => ({
+          squares: prevState.squares,
+          redTurn: !prevState.redTurn,
+          turnCount: prevState.turnCount,
+          pieceClicked: -1,
+        }));
+      }
+      else{
+        //just fill default board
+        setState({
+        squares: fillPieces(Array(64).fill(null)),
+        redTurn: true,
+        turnCount: 0,
+        pieceClicked: -1, // This stores the index of the piece clicked. -1 means that we are still deciding on a piece to click
+      });
+      }
+    }, []);
 
+  //a fresh game is started, check if player already has a UID and maybe reconnect them to the game
+  useEffect(() => {
+    if(location.state.playerColor)
+      socket.emit('register', localStorage.getItem('User1UID'));//localStorage.getItem('UserUID')
+    else
+      socket.emit('register', localStorage.getItem('User2UID'));
+  }, []);
+
+  useEffect(() => {
       //testing purposes
       socket.on('test_recieve', (data) => {
               console.log("test connection recieved!");
@@ -42,10 +80,18 @@ function Board() {
               //setResponse(data + " recieved!!");
             });
 
+      //ask_board_state of other player disconnects
+      socket.on('ask_board_state', () => { 
+        console.log("ask_board_state");
+        SendGameStateToServer(true);
+      });
+
       //recieve board data from server
-      socket.on('update_board', (boardData, changeTurn) => {
+      socket.on('update_board', (boardData, changeTurn, reconnect) => {
+        setIsReconnect(reconnect);
         console.log("board recieved!");
         //setState(boardData);
+        //update the board state
         setState({
           squares: boardData.squares,
           redTurn: !changeTurn,
@@ -55,21 +101,27 @@ function Board() {
         console.log(state);
       });
 
+      //recieve a message on who forfeited
+      socket.on('forfeit', (playerColor) => {
+        setIsForfeit(true);
+        var char = playerColor ? "RED":"BLACK";
+        //update document get element by id
+        console.log("player " + playerColor + " has forfeited!");
+        document.getElementById("forfeit").innerHTML = "Player " + char + " has forfeited!";
+
+          //can record stuff to database here
+      });
+
   } ,[socket]);
-    //testing purposes
-    function TestConnection(){
-      //console.log("test connection");
-      socket.emit('test_connection', gameID);
-    }
+
 
     //send board data to server
-    function SendGameStateToServer(){
-      socket.emit('board_update', state, gameID, location.state.playerColor);
-      
+    function SendGameStateToServer(reconnect){
+      socket.emit('board_update', state, gameID, location.state.playerColor,reconnect);   
     }
 
-    function makeBoard(state, setState) {
-      const arraySquares = state.squares.map(
+    function makeBoard(state, setState) {  
+        const arraySquares = state.squares.map(
         (square, i) => <Square
           value={square}
           onClick={() => HandleClick(i, state, setState)}
@@ -83,8 +135,8 @@ function Board() {
           {arraySquares.slice(i*8,i*8+8)}
           </div>))
       }
-
       return boardRows;
+      
   }
 
   function determineStatus(state) {
@@ -92,6 +144,7 @@ function Board() {
     let status;
     if (winner) {
       status = 'Winner: ' + winner;
+      //This is where game ends
       //may send data to database for win/loss
 
     } else {
@@ -103,6 +156,8 @@ function Board() {
 
   function fillPieces(squares) { // This will fill the Array, squares, with pieces. These pieces are Objects that tell which color the piece is, and whether it is a king
     return squares.map((square, i) => {
+      
+
       if (i < 24 && colorAtIndex(i) == 'blackSquare') { // Places black pieces
         return {
           color: 'Black',
@@ -156,8 +211,8 @@ function Board() {
   function HandleClick(i, state, setState) {    
   if (calculateWinner(state.squares)) {
       return;
-  }                                                                                 // AND this client user is red
-  if (state.pieceClicked == -1 && state.redTurn && state.squares[i]?.color == 'Red' && location.state.playerColor) { // This checks if it is red's turn, and if piece clicked is red
+  }                                                                                 // AND this client user is red // AND nobody forfeited
+  if (state.pieceClicked == -1 && state.redTurn && state.squares[i]?.color == 'Red' && location.state.playerColor && !isForfeit) { // This checks if it is red's turn, and if piece clicked is red
     if (validMoves(i, state.squares).length == 0) return // If there is no valid moves, go back to piece selection without changing turns
     setState({
       squares: state.squares,
@@ -166,8 +221,8 @@ function Board() {
       pieceClicked: i, // Updates the current state to contain the index of piece clicked (if there are valid moves)
     })
     return;
-  }                                                                                   //  AND this client user is black
-  if (state.pieceClicked == -1 && !state.redTurn && state.squares[i]?.color == 'Black' && !location.state.playerColor) { // This checks if it is black's turn, and if piece clicked is black
+  }                                                                                   //  AND this client user is black // AND nobody forfeited
+  if (state.pieceClicked == -1 && !state.redTurn && state.squares[i]?.color == 'Black' && !location.state.playerColor && !isForfeit) { // This checks if it is black's turn, and if piece clicked is black
     if (validMoves(i, state.squares).length == 0) return; // If there is no valid moves, go back to piece selection without changing turns
     setState({
       squares: state.squares,
@@ -195,6 +250,13 @@ function Board() {
       //send the board state and current playerColor to the server
       //TestConnection();
       SendGameStateToServer();
+      setState({
+        squares: state.squares,
+        redTurn: !state.redTurn,
+        turnCount: state.turnCount,
+        pieceClicked: -1,
+      })
+      localStorage.setItem('checkerboardState', JSON.stringify(state));
     }
       else 
       {
@@ -204,9 +266,8 @@ function Board() {
         turnCount: state.turnCount,
         pieceClicked: -1,
       })
-      SendGameStateToServer();
-      }
-      //TestConnection();
+      }  
+      //store after making move
       
   }
 
@@ -222,6 +283,11 @@ else {
 }
   }
 
+  function Forfeit(){
+    socket.emit('forfeit_player', location.state.playerColor, gameID);
+
+  }
+
   function calculateWinner(squares) {
 if (!squares.find((piece)=>piece?.color == 'Black')) return 'Red'; // Checks if there are any Black pieces remaining. If not, Red wins
 if (!squares.find((piece)=>piece?.color == 'Red')) return 'Black'; // Checks if there are any Red pieces remaining. If not, Black wins
@@ -233,8 +299,12 @@ return null;
         {location.state.playerColor ? <h2 >You are RED</h2> : <h2>You are BLACK</h2>} 
         <div className="status">{determineStatus(state)}</div>
         {makeBoard(state, setState)}
+        <button onClick={() => {Forfeit()}}> Forefeit game </button>
+        {/* <Forefeit /> */}
+        <h2 id="forfeit"></h2>
       </div>
     );
 }
+
 
 export default Board;

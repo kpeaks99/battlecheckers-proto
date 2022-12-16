@@ -1,0 +1,16 @@
+-in CLIENT directory, 
+
+do 'npm i socket.io-client' 
+do 'npm install'
+
+you can now do 'npm start'
+
+-in SERVER directory, 
+do 'npm install'
+do 'npm add express cors nodemon socket.io'
+
+you can now do 'npm start'
+
+-You have to switch the server for the battleboard to work.
+  In the server directory, do node .\Battleboard-server.js
+  If you wanna go back to the database, do node .\index.js
