@@ -15,7 +15,7 @@ router.get("/", async (req,res)=>{ //Fetches all player stats
                 model: userStat, as :'playerStat'
             }]
         }
-
+        
         );
 
     res.json(playerStats);
