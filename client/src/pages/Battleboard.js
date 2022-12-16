@@ -65,9 +65,12 @@ function Board() {
         setState(JSON.parse(boardState));
         //setstate(prevState)
         setState(prevState => ({
-          // ...prevState,
-          //redTurn: true,
-          ...prevState,
+          //  ...prevState,
+          // redTurn: true,
+          squares: prevState.squares,
+          redTurn: !prevState.redTurn,
+          turnCount: prevState.turnCount,
+          //...prevState,
           pieceClicked: -1,
         }));
       }
@@ -175,8 +178,6 @@ function Board() {
           + " has forfeited!";
 
           //can record stuff to database here
-
-
       });
 
   } ,[socket]);
