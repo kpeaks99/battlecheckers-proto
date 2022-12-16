@@ -40,7 +40,6 @@ function App() {
     status: false});
   }
 
-  const [loggedIn, setLoggedIn] = useState(false);
 
   return (
     <AuthContext.Provider value={{authState, setAuthState}}>
@@ -73,7 +72,7 @@ function App() {
       
       <Routes>
         <Route path="/" element={<Title/>}/>
-        <Route path="/Login" element={() => <Login setLoggedIn={setLoggedIn}/>}/>
+        <Route path="/Login" element={<Login/>}/>
         <Route path="/Register" element={<Register/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/stats" element={<Profile/>}/>
