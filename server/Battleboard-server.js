@@ -1,19 +1,11 @@
-//get from index.js
-// const express = require('express');
-// const router = express.Router();
-// const app = express();
-// const http = require('http');
+
 const { Server } = require('socket.io');
-// //const server = require('./index.js');
-// //const http = require('http');
-// const server = http.createServer(app);
 
 const express = require('express');
 const router = express.Router();
 const app = express();
 const http = require('http');
-const cors = require("cors");   //allows us to self refrence our computer to be both host and client
-const db = require('./models');
+
 
 const server = http.createServer(app);
 
@@ -23,9 +15,6 @@ const server = http.createServer(app);
 const players = {};
 //current active games
 const games = {};
-
-//testing
-var squareCounter = 0;
 
 
 const io = new Server(server, {
@@ -75,54 +64,36 @@ const io = new Server(server, {
                 console.log("DATA is this UID for the user that disconnects ")
                 console.log("games[keys].player1.playerGameUID: " + games[keys].player1.playerGameUID + " data: " + data);
                 console.log("games[keys].player2.playerGameUID: " + games[keys].player2.playerGameUID + " data: " + data);
-                //if player1 or player2 is the same as the data(the user's generated id are the same) for this game
-                //                      playerID
-                // games[players[socket.id].disconnected] = true;
-                //console.log("this this thing on????")
+
                 console.log(games[keys].player1.playerGameUID === data)
                 console.log(games[keys].player1.disconnected)
+                //if the player that disconnected is player1 or player2
                 if(games[keys].player1.playerGameUID == data && games[keys].player1.disconnected == true){ 
-                    console.log("@@@@@@player1 is RECONNECTING@@@@@@@");
-                    //probably ask other player to give their board state
-                    //give this player 
-                    //games[keys].player1.playerId = data;
-                    //players[socket.id].playerId = data;
+                    console.log("player1 is RECONNECTING");
+                    //set data(UID) to connected player
                     players[socket.id].playerGameUID = data;
-                    //turn keys into integer
+                    //turn keys into integer, give connected player the gameID
                     players[socket.id].gameID = Number(keys);
+                    //assign to player1
                     games[keys].player1 = players[socket.id];
                     console.log("game AFTER reconnecting")
                     console.log(games)
-                    //SHOULD ALSO ASK THE OTHER PLAYER FOR THEIR BOARD STATE
-                    //io.to(games[keys].player2.playerId).emit('ask_board_state');
                     return;
                 }
                 if(games[keys].player2.playerGameUID == data && games[keys].player2.disconnected == false){
-                    console.log("@@@@@@@@@player2 is RECONNECTING");
-                    //games[keys].player2.playerId = data;
+                    console.log("player2 is RECONNECTING");
+                    //set data(UID) to connected player
                     players[socket.id].playerGameUID = data;
+                    //turn keys into integer, give connected player the gameID
                     players[socket.id].gameID = Number(keys);
+                    //assign to player2
                     games[keys].player2 = players[socket.id];
-                    //SHOULD ALSO ASK THE OTHER PLAYER FOR THEIR BOARD STATE
                     console.log("game AFTER reconnecting")
                     console.log(games)
-                    //io.to(games[keys].player1.playerId).emit('ask_board_state');
                     return;
                 }
             }
-
-            // if (game.Players.existsUID(data)) {
-            //     player = game.Players.getByUID(data);
-            //     player.disconnected = false;
-            // } else {
-            //     //timed out, create new player
-            // }
-        } /*else{
-            //localStorage is not set, create new player
-            console.log("new player: making UID");
-            io.to(socket.id).emit('new_player');
-        }*/
-
+        } 
         console.log("registering player test ");
     });
 
@@ -130,36 +101,8 @@ const io = new Server(server, {
     socket.on('update_playerID',  (UID,roomID,playerColor) => { 
         //update players.playerId to the data
         players[socket.id].playerGameUID = UID;
-        // if(playerColor){
-        //     //player is red
-        //     games[roomID].player1 = players[socket.id];
-        // }
-        // else{
-        //     //player is black
-        //     games[roomID].player2 = players[socket.id];
-        // }
-        //games[roomID].player1.playerGameUID = UID;
         console.log("updating playerID: " + UID);
     });
-
-    //for testing, it's for the two players to click 
-    socket.on('square_click', (roomID,playerColor) => {
-        //console.log(games);
-        squareCounter++
-        console.log("square clicked" + squareCounter);
-        //true is red, false is black
-        if(playerColor){
-            io.to(games[roomID].player1.playerId).emit('update_square', squareCounter, false);
-            io.to(games[roomID].player2.playerId).emit('update_square', squareCounter, true); 
-        }
-        else
-        {
-            io.to(games[roomID].player1.playerId).emit('update_square', squareCounter, true);
-            io.to(games[roomID].player2.playerId).emit('update_square', squareCounter, false);
-        }
-        // io.to(games[roomID].player1.playerId).emit('update_square', squareCounter);
-        // io.to(games[roomID].player2.playerId).emit('update_square', squareCounter); 
-    })
 
     //testing purposes
     socket.on('test_connection',(roomID)=>{
@@ -174,8 +117,6 @@ const io = new Server(server, {
         // console.log(players);
         console.log(games[roomID]); 
 
-        io.to(games[roomID].player2.playerId).emit('test_recieve',);  
-        io.to(games[roomID].player1.playerId).emit('test_recieve',);  
         //if RED player finished their turn
         if(playerColor){
             //send board and true(red) boolean to black player 
@@ -193,7 +134,9 @@ const io = new Server(server, {
 
         //iterate through players to find socket.id with matching gameID
         for(keys in players){
+            //find the room that the player is trying to join
             if(players[keys].gameID == roomID){
+                //if player2 is not tacken
                 if(games[roomID].player2 === ''){
                     players[socket.id].gameID = roomID;
                     //players[keys].gameID = roomID;
@@ -203,7 +146,6 @@ const io = new Server(server, {
                     //false = black player2
                     //true = red player1
                     console.log(games[roomID]);
-                    //players[socket.id].playerGameUID = Math.floor(Math.random() * 1000000000);
                     //players are also given a random number to identify themselves for when they reconnect
                     var1 = Math.floor(Math.random() * 1000000000);
                     var2 = Math.floor(Math.random() * 1000000000);
@@ -213,27 +155,7 @@ const io = new Server(server, {
                     return;
                 }
             }
-        }
-
-        //give the joining player(player2) the host's(player1) gameID
-        // players[socket.id].gameID = roomID;
-
-        // //checks to see if player 2 slot is empty
-        // //console.log(roomid.joingame)
-        // console.log(players[socket.id]); 
-        // if(games[roomID].player2 === ''){
-        //     games[roomID].player2 = players[socket.id];
-        //     console.log("player 2 joined");
-
-        //     // take them to gameboard
-        //     //false = black player2
-        //     //true = red player1
-        //     console.log(games[roomID]);
-        //     io.to(games[roomID].player1.playerId).emit('begin_game', true, roomID);
-        //     io.to(games[roomID].player2.playerId).emit('begin_game', false, roomID); 
-        //     // console.log(games[roomID]);
-        // }
-            
+        }      
     });
 
    
@@ -243,7 +165,8 @@ const io = new Server(server, {
         //if the game being started is being hosted(false), there the boardID to user
         //
         //else, if you are doing QuickPlay(true), don't send the boardID
-        //PRIVATE PLAY
+        //PRIVATE PLAY for hosting a game
+        //if matchmaking is not selected
         if(!matchMaking)
         {
             //set gameID to current player number, this is their room
@@ -257,6 +180,7 @@ const io = new Server(server, {
         }
         else
         //QUICKPLAY
+        //if matchmaking is selected
         {
             //search for a game that is not full
             //if games is empty, create a new game
@@ -287,6 +211,7 @@ const io = new Server(server, {
                     //false = black player2
                     //true = red player1
                     console.log(games[keys]);
+                    //players are also given a random number to identify themselves for when they reconnect
                     var1 = Math.floor(Math.random() * 1000000000);
                     var2 = Math.floor(Math.random() * 1000000000);
                     io.to(games[keys].player1.playerId).emit('begin_game', true, games[keys].player1.gameID, var1);
@@ -294,25 +219,6 @@ const io = new Server(server, {
                     return;
                 }
             }
-
-
-            // for(var i = 0; i < Object.keys(games).length; i++){
-            //     if(games[i].player2 === ''){
-            //         //join the game
-            //         games[i].player2 = players[num];
-            //         //give the joining player(player2) the host's(player1) gameID
-            //         players[num].gameID = games[i].player1.gameID;
-            //         console.log("player 2 joined");
-            //         // take them to gameboard
-            //         //false = black player2
-            //         //true = red player1
-            //         io.to(games[i].player1.playerId).emit('begin_game', true, games[i].player1.gameID);
-            //         io.to(games[i].player2.playerId).emit('begin_game', false, games[i].player1.gameID); 
-            //         console.log(games[i]);
-            //         // break;
-            //         return;
-            //     }
-            // }
             //if no games are found, create a new game
             //set gameID to current player number, this is their room
             players[socket.id].gameID = roomID;
@@ -339,7 +245,7 @@ const io = new Server(server, {
             }
         }})
 
-    
+    //when a player forfeits, signal both players that the game is over
     socket.on('forfeit_player', (playerColor, roomID) => {
         console.log("forefeit");
         if(playerColor){
@@ -351,54 +257,13 @@ const io = new Server(server, {
             io.to(games[roomID].player2.playerId).emit('forfeit', playerColor);
         }
     })
-
-        // players[num] = {
-        //     playerId: socket.id,
-        //     gameID: '',
-        // };
-        //problem: the object of the player that leaves doesn't get deleted from the players array
     socket.on('disconnect', () => {
-            // delete user from players as they disconnect
-            // does not work when there are only two players on the server
-        // for(var i = 0; i < Object.keys(players).length; i++){
-        //     //console.log("player " + i + " is " + players[i].playerId);
-        //     console.log(i);
-        //     console.log(players);
-        //     if(players[i].playerId === socket.id){ 
-        //         console.log("deleted player: " + socket.id + " form position " + i);
-        //         // delete players[index]; 
-        //         //delete players[i];
-        //         players.splice(i, 1);
-        //         console.log("after user was deleted");
-        //         console.log(players);
-        //         //delete socket.id; 
-        //         return;    
-        //     }
-        // }
-
-        //delete user from players as they disconnect
-        // for(var keys in players){
-        //     if(players[keys].playerId === socket.id){
-        //         console.log("deleted player: " + socket.id + " form position " + keys);
-        //         delete players[keys];
-        //         //players.splice(keys, 1);
-        //         console.log("after user was deleted");
-        //         console.log(players);
-        //         return;
-        //     }
-        // }
-
-        // players.filter(function(player){
-        //     return player.playerId !== socket.id;
-        // })
-
-        //games[keys].player1.playerId
-        //players[socket.id].disconnected = true; 
 
         //if the player's game is not undefined, set the player's disconnected to true
         if(players[socket.id].gameID !== ''){
             console.log("player disconnected from game: " + players[socket.id].gameID + " with id: " + socket.id);
             //have the player in games[players[socket.id].gameID] set disconnected to true
+            //basically set disconnected to true if player1 or player2 is the one disconnecting
             if(games[players[socket.id].gameID].player1.playerId === socket.id){
                 games[players[socket.id].gameID].player1.disconnected = true;
             }
@@ -418,12 +283,7 @@ const io = new Server(server, {
         }
         else{
             delete players[socket.id];
-        }
-        //the timer is set to 10 seconds to allow the user to reconnect
-        
-    
-        //delete players[socket.id];
-            
+        }      
     });
 });
 
